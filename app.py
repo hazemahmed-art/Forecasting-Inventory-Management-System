@@ -129,12 +129,18 @@ def calculate_mse(df, actual_col="Demand", forecast_col="Forecast"):
     df["Squared Error"] = (df[actual_col] - df[forecast_col]) ** 2
     return df["Squared Error"].mean()
 
-# ================= Edit Table Function =================
+# ================= Edit Table Function (مع الحماية من None) =================
 def edit_table(file_path, period):
     st.subheader("✏ Edit / Add / Delete Data")
+
     if st.button("⬅ Back to View Mode"):
         st.session_state.editing = False
         st.rerun()
+
+    # حماية مهمة جدًا: لو الـ df None، ما نكملش
+    if st.session_state.df is None:
+        st.warning("No data loaded yet. Please upload or select a file first.")
+        st.stop()
 
     first_col = PERIOD_COLUMN_MAP[period]
     df = st.session_state.df.copy()
@@ -286,7 +292,6 @@ def page_forecasting():
     )
     st.divider()
 
-    # Initialize session state for forecasting
     if "forecast_ran" not in st.session_state:
         st.session_state.forecast_ran = False
 
@@ -334,7 +339,6 @@ def page_forecasting():
                 st.session_state.forecast_ran = True
                 st.rerun()
 
-    # Show results after running
     if st.session_state.forecast_ran:
         criteria = st.session_state.selected_criteria
         best_method = st.session_state.best_method
@@ -367,8 +371,7 @@ def page_forecasting():
 
         st.divider()
 
-        # View Other Methods
-        st.subheader("View Other Forecasting Methods")
+        st.subheader("🔍 View Other Forecasting Methods")
         c1, c2, c3 = st.columns(3)
         with c1:
             show_naive = st.checkbox("Naive", key="chk_naive")
@@ -397,17 +400,13 @@ def page_forecasting():
 
         st.divider()
 
-    #    # Show Errors Button (شغال دلوقتي)
-    #    if st.button("📉 Show Errors for All Forecasting Methods"):
-    #        st.subheader("Error Comparison Table")
-    #        styled = st.session_state.all_errors.style \
-    #            .highlight_min(subset=[criteria], color="#d4edda") \
-    #            .format("{:.4f}")
-    #        st.dataframe(styled, use_container_width=True)
+        if st.button("📉 Show Errors for All Forecasting Methods"):
+            st.subheader("Error Comparison Table")
+            styled = st.session_state.all_errors.style.highlight_min(subset=[criteria], color="#d4edda").format("{:.4f}")
+            st.dataframe(styled, use_container_width=True)
 
-    #st.divider()
+    st.divider()
     if st.button("⬅ Back to Analysis"):
-        # Clear forecasting state
         keys_to_clear = ["forecast_ran", "best_method", "best_error", "all_results", "all_errors", "selected_criteria"]
         for key in keys_to_clear:
             if key in st.session_state:
