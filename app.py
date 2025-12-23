@@ -214,7 +214,7 @@ def edit_table(file_path, period):
 
 # ================= Pages =================
 def page_material_selection():
-    st.title("Material Data Management App")
+    #   st.title("Material Data Management App")
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
         st.session_state.page = 2
@@ -542,4 +542,5 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
 
