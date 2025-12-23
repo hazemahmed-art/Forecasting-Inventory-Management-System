@@ -4,7 +4,7 @@ import os
 import matplotlib.pyplot as plt
 
 # ================= Page Config =================
-st.set_page_config(page_title="Material App", layout="wide")
+st.set_page_config(page_title="Forecasting & Inventory Management System", layout="wide")
 
 # ================= Constants =================
 PERIOD_COLUMN_MAP = {
@@ -40,7 +40,7 @@ except Exception as e:
 
 # ================= Functions =================
 def select_material(df):
-    st.markdown("## Material Classification")
+    st.markdown("## Select Target Material")
     c1, c2, c3 = st.columns(3)
     with c1:
         family = st.selectbox("Material Family", sorted(df["MaterialFamily"].unique()), key="fam_sel")
@@ -542,3 +542,4 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
