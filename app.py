@@ -400,10 +400,10 @@ def page_forecasting():
 
         st.divider()
 
-        if st.button("📉 Show Errors for All Forecasting Methods"):
-            st.subheader("Error Comparison Table")
-            styled = st.session_state.all_errors.style.highlight_min(subset=[criteria], color="#d4edda").format("{:.4f}")
-            st.dataframe(styled, use_container_width=True)
+      #  if st.button("📉 Show Errors for All Forecasting Methods"):
+      #      st.subheader("Error Comparison Table")
+      #      styled = st.session_state.all_errors.style.highlight_min(subset=[criteria], color="#d4edda").format("{:.4f}")
+       #     st.dataframe(styled, use_container_width=True)
 
     st.divider()
     if st.button("⬅ Back to Analysis"):
@@ -542,5 +542,6 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
 
 
