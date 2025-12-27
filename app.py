@@ -109,11 +109,11 @@ def view_table():
         'text-align': 'center'
     }).set_table_styles([
         {'selector': 'th', 'props': [
-            ('font-size', '1.5rem'),
-            ('font-weight', 'bold'),
+            ('font-size': '1.5rem'),
+            ('font-weight': 'bold'),
             ('background-color', '#f0f2f6'),
-            ('color', '#212529'),
-            ('padding', '1rem')
+            ('color': '#212529'),
+            ('padding': '1rem')
         ]}
     ])
     st.dataframe(styled_df, use_container_width=True)
@@ -284,7 +284,6 @@ def page_selected_material():
             st.stop()
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        # Checkbox for Show Table
         st.session_state.show_table = st.checkbox("Show Table", value=st.session_state.show_table)
     with c2:
         if st.button("✏ Edit Table" if not st.session_state.editing else "✏ Editing..."):
@@ -301,7 +300,6 @@ def page_selected_material():
             st.session_state.page = 3
             st.rerun()
     
-    # عرض الجدول فقط إذا كان في بيانات محملة
     if st.session_state.show_table:
         if st.session_state.df is not None:
             view_table()
@@ -315,19 +313,89 @@ def page_selected_material():
 def page_analysis():
     st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
+
+    # 3 أعمدة متساوية
     col1, col2, col3 = st.columns(3)
+
     with col1:
-        if st.button("📈 Forecasting", use_container_width=True, type="primary"):
+        st.markdown("""
+        <div style="
+            background-color: white;
+            border: 3px solid #fa7328;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        ">
+            <h3 style="background-color: #fa7328; color: white; padding: 12px; border-radius: 8px; margin: -20px -20px 20px -20px;">
+                📈 Forecasting
+            </h3>
+            <img src="images/forecasting.png" style="max-width: 100%; height: auto; border-radius: 8px;">
+            <p style="font-size: 0.9rem; color: #555555; margin-top: 15px;">
+                Compare different forecasting methods and select the best one based on error metrics.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Go to Forecasting ➜", type="primary", use_container_width=True):
             st.session_state.page = 4
             st.rerun()
+
     with col2:
-        if st.button("📦 EOQ", use_container_width=True, type="primary"):
+        st.markdown("""
+        <div style="
+            background-color: white;
+            border: 3px solid #fa7328;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        ">
+            <h3 style="background-color: #fa7328; color: white; padding: 12px; border-radius: 8px; margin: -20px -20px 20px -20px;">
+                📦 Economic Order Quantity (EOQ)
+            </h3>
+            <img src="images/eoq.png" style="max-width: 100%; height: auto; border-radius: 8px;">
+            <p style="font-size: 0.9rem; color: #555555; margin-top: 15px;">
+                Calculate the optimal order quantity and reorder point to minimize inventory costs.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Go to EOQ ➜", type="primary", use_container_width=True):
             st.session_state.page = 5
             st.rerun()
+
     with col3:
-        if st.button("🛡️ Safety Stock", use_container_width=True, type="primary"):
+        st.markdown("""
+        <div style="
+            background-color: white;
+            border: 3px solid #fa7328;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        ">
+            <h3 style="background-color: #fa7328; color: white; padding: 12px; border-radius: 8px; margin: -20px -20px 20px -20px;">
+                🛡️ Safety Stock
+            </h3>
+            <img src="images/safetystock.png" style="max-width: 100%; height: auto; border-radius: 8px;">
+            <p style="font-size: 0.9rem; color: #555555; margin-top: 15px;">
+                Determine the safety stock level using fixed or statistical methods based on service level.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button("Go to Safety Stock ➜", type="primary", use_container_width=True):
             st.session_state.page = 6
             st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅ Back to Data Editing"):
         st.session_state.page = 2
         st.rerun()
