@@ -1,0 +1,130 @@
+/* style.css */
+
+:root {
+    --main-color: #10cab7;
+    --secondary-color: #2c4755;
+    --section-background: #f6f6f6;
+    --header-background: #ffffff;
+    --text-primary: #2c4755;
+    --text-secondary: #555555;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--section-background);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+}
+
+/* Header مستطيل أبيض في الأعلى */
+.stApp > header {
+    background-color: var(--header-background) !important;
+    border-bottom: 3px solid var(--main-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.stApp > header .css-1v0mbdj {
+    padding: 1rem 0;
+}
+
+/* تنسيق العناوين الرئيسية */
+h1, h2, h3, .stTitle {
+    color: var(--main-color) !important;
+    font-weight: 600 !important;
+}
+
+/* تنسيق النصوص العادية */
+.stMarkdown, .stText {
+    color: var(--text-primary);
+}
+
+/* خلفية الأقسام */
+section[data-testid="stSidebar"] {
+    background-color: var(--header-background);
+}
+
+div[data-testid="stDecoration"] {
+    background-color: var(--main-color);
+}
+
+/* تنسيق الأزرار الرئيسية (Next, Calculate, Run Forecasting, etc.) */
+button[kind="primary"] {
+    background-color: var(--main-color) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 6px rgba(16, 202, 183, 0.2) !important;
+}
+
+button[kind="primary"]:hover {
+    background-color: #0eb8a5 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 202, 183, 0.3) !important;
+}
+
+button[kind="primary"]:active {
+    transform: translateY(0);
+}
+
+/* تنسيق أزرار Back (العادية) */
+button[kind="secondary"] {
+    background-color: var(--secondary-color) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+}
+
+button[kind="secondary"]:hover {
+    background-color: #243a46 !important;
+    transform: translateY(-2px);
+}
+
+/* تنسيق الجداول */
+.stDataFrame {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* تحسين شكل الـ Selectbox والـ Radio */
+.stSelectbox > div > div, .stRadio > div {
+    background-color: white;
+    border-radius: 8px;
+    padding: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* تحسين الـ Metrics */
+.stMetric {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid var(--main-color);
+}
+
+/* تحسين الـ Success, Info, Warning */
+.stSuccess, .stInfo, .stWarning {
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* إضافة مساحة علوية بعد الـ Header */
+.main .block-container {
+    padding-top: 2rem;
+    max-width: 1200px;
+}
+
+/* تحسين الـ Divider */
+hr {
+    border-color: var(--main-color);
+    opacity: 0.3;
+}
