@@ -210,8 +210,8 @@ def edit_table(file_path, period):
 # ================= SIDEBAR: Navigation & Current Selection Info =================
 # This section creates a persistent sidebar that appears on every screen
 with st.sidebar:
-    st.header("📊 Forecasting & Inventory System")
-    st.markdown("---")
+    #st.header("📊 Forecasting & Inventory System")
+    #st.markdown("---")
     
     # Show current selected material (if any)
     if st.session_state.material:
@@ -538,3 +538,4 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
