@@ -46,7 +46,7 @@ except Exception as e:
 
 # ================= Functions =================
 def select_material(df):
-    st.markdown("## Select a Target Material")
+    st.markdown("## Select aa Target Material")
     c1, c2, c3 = st.columns(3)
     with c1:
         family = st.selectbox("Material Family", sorted(df["MaterialFamily"].unique()), key="fam_sel")
@@ -544,3 +544,4 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
