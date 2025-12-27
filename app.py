@@ -1,11 +1,10 @@
 # app.py
-
 import streamlit as st
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-# ================= تحميل التنسيق الخارجي =================
+# ================= External Styling =================
 with open("style.css") as css_file:
     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
 
@@ -37,14 +36,14 @@ if "show_table" not in st.session_state:
 if "editing" not in st.session_state:
     st.session_state.editing = False
 
-# ================= Load Classification =================
+# ================= Load Material Classification =================
 try:
     df_class = pd.read_excel("Database/Classification-of-Material.xlsx")
 except Exception as e:
     st.error(f"Cannot read 'Classification-of-Material.xlsx': {e}")
     st.stop()
 
-# ================= Functions =================
+# ================= Helper Functions =================
 def select_material(df):
     st.markdown("## Select a Target Material")
     c1, c2, c3 = st.columns(3)
@@ -138,20 +137,15 @@ def calculate_mse(df, actual_col="Demand", forecast_col="Forecast"):
 # ================= Edit Table Function =================
 def edit_table(file_path, period):
     st.subheader("✏ Edit / Add / Delete Data")
-
     if st.button("⬅ Back to View Mode"):
         st.session_state.editing = False
         st.rerun()
-
     if st.session_state.df is None:
         st.warning("No data loaded yet. Please upload or select a file first.")
         st.stop()
-
     first_col = PERIOD_COLUMN_MAP[period]
     df = st.session_state.df.copy()
-
     st.divider()
-
     # Add New Row
     st.markdown("### ➕ Add New Row")
     new_row = {}
@@ -171,9 +165,7 @@ def edit_table(file_path, period):
         st.session_state.df = df
         st.success("New row added successfully!")
         st.rerun()
-
     st.divider()
-
     # Edit Existing Row
     st.markdown("### ✏ Edit Existing Row")
     row_to_edit = st.selectbox("Choose row to edit", options=df[first_col].tolist(), key="edit_row_dropdown")
@@ -195,9 +187,7 @@ def edit_table(file_path, period):
         st.session_state.df = df
         st.success("Changes saved!")
         st.rerun()
-
     st.divider()
-
     # Delete Row
     st.markdown("### 🗑 Delete Row")
     delete_options = ["-- Select to delete --"] + df[first_col].tolist()
@@ -217,28 +207,28 @@ def edit_table(file_path, period):
             if st.button("Cancel"):
                 st.rerun()
 
-# ================= Pages =================
+# ================= SCREEN 1: Material Selection =================
 def page_material_selection():
+    st.title("Welcome to Forecasting & Inventory Management System")
+    st.markdown("### Step 1: Select the Material you want to analyze")
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
         st.session_state.page = 2
         st.rerun()
 
+# ================= SCREEN 2: Data Selection & Table View/Edit =================
 def page_selected_material():
     st.title("Selected Material")
     st.markdown(f"**{st.session_state.material['family']} / {st.session_state.material['type']} / {st.session_state.material['grade']}**")
-
     st.session_state.period = select_period()
     family = st.session_state.material['family']
     m_type = st.session_state.material['type']
     grade = st.session_state.material['grade']
     st.session_state.file = choose_data_source(st.session_state.period, family, m_type, grade)
-
     if st.session_state.file and st.session_state.df is None:
         st.session_state.df = load_table(st.session_state.file)
         if st.session_state.df is None:
             st.stop()
-
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.session_state.show_table = st.checkbox("Show Table", value=st.session_state.show_table)
@@ -256,14 +246,15 @@ def page_selected_material():
         if st.button("Next ➜ Analysis", type="primary"):
             st.session_state.page = 3
             st.rerun()
-
     if st.session_state.show_table:
         view_table()
     if st.session_state.editing:
         edit_table(st.session_state.file, st.session_state.period)
 
+# ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
     st.title("Analysis & Calculations")
+    st.markdown("### Choose the analysis you want to perform")
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("📈 Forecasting", use_container_width=True, type="primary"):
@@ -281,15 +272,13 @@ def page_analysis():
         st.session_state.page = 2
         st.rerun()
 
-# ================= Forecasting Page =================
+# ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
     st.title("📈 Forecasting Analysis")
-
     mat = st.session_state.material
     period_name = st.session_state.period
     first_col = PERIOD_COLUMN_MAP[period_name]
     df_base = st.session_state.df.copy()
-
     st.markdown(
         f"""
         **Material:** {mat['family']} / {mat['type']} / {mat['grade']} &nbsp;&nbsp;|&nbsp;&nbsp;
@@ -298,27 +287,22 @@ def page_forecasting():
         """
     )
     st.divider()
-
     if "forecast_ran" not in st.session_state:
         st.session_state.forecast_ran = False
-
     if not st.session_state.forecast_ran:
         st.subheader("Select Evaluation Criteria")
         criteria = st.radio("Choose the error metric:", ["MAD", "MSE"], horizontal=True)
-
         if st.button("RUN FORECASTING", type="primary", use_container_width=True):
             st.session_state.selected_criteria = criteria
             with st.spinner("Running forecasting models..."):
                 results = {}
                 errors = []
-
                 # Naive
                 df_n = run_naive_forecasting(df_base.copy(), first_col)
                 mad_n = calculate_mad(df_n, forecast_col="Naive Forecast")
                 mse_n = calculate_mse(df_n, forecast_col="Naive Forecast")
                 results["Naive"] = df_n
                 errors.append({"Method": "Naive", "MAD": mad_n, "MSE": mse_n})
-
                 # Moving Average
                 ma_n = 3
                 df_ma = run_moving_average_forecasting(df_base.copy(), first_col, n=ma_n)
@@ -326,7 +310,6 @@ def page_forecasting():
                 mse_ma = calculate_mse(df_ma, forecast_col="Moving Avg Forecast")
                 results["Moving Average"] = df_ma
                 errors.append({"Method": "Moving Average", "MAD": mad_ma, "MSE": mse_ma})
-
                 # Exponential Smoothing
                 alpha = 0.3
                 df_exp = run_exponential_forecasting(df_base.copy(), first_col, alpha=alpha)
@@ -334,35 +317,27 @@ def page_forecasting():
                 mse_exp = calculate_mse(df_exp, forecast_col="Exponential Forecast")
                 results["Exponential Smoothing"] = df_exp
                 errors.append({"Method": "Exponential Smoothing", "MAD": mad_exp, "MSE": mse_exp})
-
                 error_df = pd.DataFrame(errors).round(4)
                 st.session_state.all_results = results
                 st.session_state.all_errors = error_df
-
                 best_row = error_df.loc[error_df[criteria].idxmin()]
                 st.session_state.best_method = best_row["Method"]
                 st.session_state.best_error = best_row[criteria]
-
                 st.session_state.forecast_ran = True
                 st.rerun()
-
     if st.session_state.forecast_ran:
         criteria = st.session_state.selected_criteria
         best_method = st.session_state.best_method
         best_error = st.session_state.best_error
         results = st.session_state.all_results
-
         st.success(f"Best Method according to {criteria}: **{best_method}** ({criteria} = {best_error:.4f})")
-
         df_best = results[best_method]
         fc_best = [col for col in df_best.columns if "Forecast" in col][0]
-
         st.divider()
         st.subheader(f"📋 Forecast Table – {best_method}")
         table_best = df_base[[first_col, "Demand"]].copy()
         table_best["Forecast"] = df_best[fc_best]
         st.dataframe(table_best.style.format("{:.2f}"), use_container_width=True)
-
         st.subheader(f"📊 Forecast Chart – {best_method}")
         fig, ax = plt.subplots(figsize=(12, 6))
         ax.plot(table_best[first_col], table_best["Demand"], 'o-', label="Actual Demand", color="blue")
@@ -373,11 +348,8 @@ def page_forecasting():
         ax.legend()
         ax.grid(True, alpha=0.3)
         st.pyplot(fig)
-
         st.info(f"**{criteria} for {best_method}: {best_error:.4f}**")
-
         st.divider()
-
         st.subheader("🔍 View Other Forecasting Methods")
         c1, c2, c3 = st.columns(3)
         with c1:
@@ -386,7 +358,6 @@ def page_forecasting():
             show_ma = st.checkbox("Moving Average", key="chk_ma")
         with c3:
             show_exp = st.checkbox("Exponential Smoothing", key="chk_exp")
-
         selected = []
         if show_naive:
             selected.append("Naive")
@@ -394,7 +365,6 @@ def page_forecasting():
             selected.append("Moving Average")
         if show_exp:
             selected.append("Exponential Smoothing")
-
         for method in selected:
             if method == best_method:
                 continue
@@ -404,9 +374,7 @@ def page_forecasting():
             table_o = df_base[[first_col, "Demand"]].copy()
             table_o["Forecast"] = df_o[fc_o]
             st.dataframe(table_o.style.format("{:.2f}"), use_container_width=True)
-
         st.divider()
-
     st.divider()
     if st.button("⬅ Back to Analysis"):
         keys_to_clear = ["forecast_ran", "best_method", "best_error", "all_results", "all_errors", "selected_criteria"]
@@ -416,15 +384,12 @@ def page_forecasting():
         st.session_state.page = 3
         st.rerun()
 
-# ================= EOQ Page =================
+# ================= SCREEN 5: EOQ Calculation =================
 def page_eoq():
     st.title("📦 Economic Order Quantity (EOQ) & Reorder Point")
-
     mat = st.session_state.material
     st.markdown(f"**Material:** {mat['family']} / {mat['type']} / {mat['grade']}")
-
     st.divider()
-
     st.subheader("EOQ Parameters")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -433,9 +398,7 @@ def page_eoq():
         S = st.number_input("Ordering Cost per Order (S)", min_value=0.0, value=200.0, step=10.0)
     with col3:
         H = st.number_input("Holding Cost per Unit per Year (H)", min_value=0.01, value=25.0, step=1.0)
-
     st.divider()
-
     st.subheader("Reorder Point Parameters")
     col4, col5 = st.columns(2)
     with col4:
@@ -443,9 +406,7 @@ def page_eoq():
     with col5:
         daily_demand = D / 365
         daily_demand = st.number_input("Average Daily Demand", min_value=0.0, value=round(daily_demand, 2), step=0.1)
-
     st.divider()
-
     if st.button("Calculate EOQ & Reorder Point", type="primary", use_container_width=True):
         if H <= 0:
             st.error("Holding cost (H) must be greater than zero.")
@@ -453,9 +414,7 @@ def page_eoq():
             EOQ = ((2 * D * S) / H) ** 0.5
             reorder_point = daily_demand * lead_time_days
             days_between_orders = EOQ / daily_demand if daily_demand > 0 else 0
-
             st.success("Calculation completed successfully!")
-
             col_eoq, col_rop, col_cycle = st.columns(3)
             with col_eoq:
                 st.metric("Optimal Order Quantity (EOQ)", f"{EOQ:.2f} units")
@@ -463,13 +422,10 @@ def page_eoq():
                 st.metric("Reorder Point", f"{reorder_point:.2f} units")
             with col_cycle:
                 st.metric("Order Every", f"{days_between_orders:.1f} days")
-
             st.divider()
-
             st.subheader("📊 Inventory Level During Lead Time")
             days = list(range(0, int(lead_time_days + 10)))
             inventory_level = [EOQ - daily_demand * d for d in days]
-
             fig, ax = plt.subplots(figsize=(12, 6))
             ax.plot(days, inventory_level, 'o-', label="Inventory Level", color="purple", linewidth=2)
             ax.axhline(y=reorder_point, color="red", linestyle="--", linewidth=2, label=f"Reorder Point ({reorder_point:.2f})")
@@ -480,34 +436,26 @@ def page_eoq():
             ax.legend()
             ax.grid(True, alpha=0.3)
             st.pyplot(fig)
-
     st.divider()
     if st.button("⬅ Back to Analysis"):
         st.session_state.page = 3
         st.rerun()
 
-# ================= Safety Stock Page =================
+# ================= SCREEN 6: Safety Stock Calculation =================
 def page_safety_stock():
     st.title("🛡️ Safety Stock Calculation")
-
     mat = st.session_state.material
     st.markdown(f"**Material:** {mat['family']} / {mat['type']} / {mat['grade']}")
-
     st.divider()
-
     st.subheader("Choose Safety Stock Method")
     ss_method = st.radio("Select method:", ["Fixed Safety Stock", "Statistical Safety Stock (Service Level)"], horizontal=True)
-
     st.divider()
-
     if ss_method == "Fixed Safety Stock":
         st.subheader("Fixed Safety Stock")
         fixed_ss = st.number_input("Enter Safety Stock Quantity (units)", min_value=0.0, value=100.0, step=10.0)
-
         if st.button("Calculate", type="primary"):
             st.success("Fixed Safety Stock Applied!")
             st.metric("Safety Stock", f"{fixed_ss:.2f} units")
-
     else:
         st.subheader("Statistical Safety Stock Parameters")
         col1, col2 = st.columns(2)
@@ -515,17 +463,13 @@ def page_safety_stock():
             service_level = st.slider("Desired Service Level (%)", min_value=80.0, max_value=99.9, value=95.0, step=0.1)
         with col2:
             std_dev_lead_demand = st.number_input("Standard Deviation of Demand During Lead Time", min_value=0.0, value=50.0, step=1.0)
-
         z_map = {80: 0.84, 90: 1.28, 95: 1.65, 97.5: 1.96, 99: 2.33, 99.9: 3.09}
         z_score = z_map.get(round(service_level), 1.65)
-
         if st.button("Calculate Safety Stock", type="primary"):
             safety_stock = z_score * std_dev_lead_demand
-
             st.success("Statistical Safety Stock Calculated!")
             st.metric("Safety Stock", f"{safety_stock:.2f} units")
             st.info(f"Z-Score used for {service_level}% service level: {z_score:.2f}")
-
     st.divider()
     if st.button("⬅ Back to Analysis"):
         st.session_state.page = 3
