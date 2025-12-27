@@ -236,25 +236,29 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
 
-# ================= FLOATING HELP BUTTON (Bottom Right) =================
-# Custom CSS for the floating help button
+# ================= FLOATING HELP BUTTON (Bottom Left - White Background) =================
+# Force white background for the whole app
 st.markdown("""
 <style>
+    .stApp {
+        background-color: white;
+        color: black;
+    }
     .help-button {
         position: fixed;
         bottom: 30px;
-        right: 30px;
+        left: 30px;          /* Moved to bottom left */
         z-index: 1000;
     }
     .help-button button {
-        width: 60px;
-        height: 60px;
+        width: 50px;         /* Smaller button */
+        height: 50px;
         border-radius: 50%;
         background-color: #fa7328;
         color: white;
-        font-size: 28px;
+        font-size: 24px;
         border: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -267,12 +271,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Floating Help Button
+# Floating Help Button (now on bottom left)
 with st.container():
-    col1, col2, col3 = st.columns([8,1,1])
-    with col3:
+    col1, col2 = st.columns([1,9])
+    with col1:
         if st.button("❓", key="help_button", help="Click for guidance"):
-            st.session_state.show_help = True
+            st.session_state.show_help = True if not st.session_state.get("show_help") else False
+            st.rerun()
 
 # Help Message (appears when button is clicked)
 if st.session_state.get("show_help", False):
@@ -280,13 +285,13 @@ if st.session_state.get("show_help", False):
     <div style="
         position: fixed;
         bottom: 100px;
-        right: 30px;
+        left: 30px;
         width: 380px;
-        background-color: #1e1e1e;
-        color: white;
+        background-color: white;
+        color: black;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         border: 2px solid #fa7328;
         z-index: 999;
     ">
@@ -305,11 +310,6 @@ if st.session_state.get("show_help", False):
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
-    # Clicking the button again closes the help
-    if st.button("❓", key="help_button_close"):
-        st.session_state.show_help = False
-        st.rerun()
 
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
@@ -481,7 +481,7 @@ def page_forecasting():
         keys_to_clear = ["forecast_ran", "best_method", "best_error", "all_results", "all_errors", "selected_criteria"]
         for key in keys_to_clear:
             if key in st.session_state:
-                del st.key
+                del st.session_state[key]
         st.session_state.page = 3
         st.rerun()
 # ================= SCREEN 5: EOQ Calculation =================
