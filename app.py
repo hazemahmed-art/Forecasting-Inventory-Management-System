@@ -284,7 +284,6 @@ def page_selected_material():
             st.stop()
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        # Checkbox for Show Table
         st.session_state.show_table = st.checkbox("Show Table", value=st.session_state.show_table)
     with c2:
         if st.button("✏ Edit Table" if not st.session_state.editing else "✏ Editing..."):
@@ -300,14 +299,13 @@ def page_selected_material():
         if st.button("Next ➜ Analysis", type="primary"):
             st.session_state.page = 3
             st.rerun()
-    
-    # عرض الجدول فقط إذا كان في بيانات محملة
+   
     if st.session_state.show_table:
         if st.session_state.df is not None:
             view_table()
         else:
             st.warning("⚠️ Please upload or select an Excel file first to view the table.")
-    
+   
     if st.session_state.editing:
         edit_table(st.session_state.file, st.session_state.period)
 
@@ -315,19 +313,26 @@ def page_selected_material():
 def page_analysis():
     st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
-    col1, col2, col3 = st.columns(3)
+
+    # جعل الراير (الأعمدة) أكبر مع مسافات مناسبة
+    col1, spacer1, col2, spacer2, col3 = st.columns([1, 0.2, 1, 0.2, 1])
+
     with col1:
         if st.button("📈 Forecasting", use_container_width=True, type="primary"):
             st.session_state.page = 4
             st.rerun()
+
     with col2:
         if st.button("📦 EOQ", use_container_width=True, type="primary"):
             st.session_state.page = 5
             st.rerun()
+
     with col3:
         if st.button("🛡️ Safety Stock", use_container_width=True, type="primary"):
             st.session_state.page = 6
             st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
     if st.button("⬅ Back to Data Editing"):
         st.session_state.page = 2
         st.rerun()
