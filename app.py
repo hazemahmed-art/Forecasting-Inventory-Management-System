@@ -314,6 +314,7 @@ def page_selected_material():
         edit_table(st.session_state.file, st.session_state.period)
 
 # ================= SCREEN 3: Analysis Menu =================
+# ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
     st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
@@ -322,11 +323,11 @@ def page_analysis():
 
     # Forecasting Card
     with col1:
-        if st.button("", key="forecasting_hidden", help="Click to go to Forecasting"):  # Hidden button
+        if st.button("", key="forecasting_card", help="Click anywhere on the card to go to Forecasting"):
             st.session_state.page = 4
             st.rerun()
         st.markdown(f"""
-        <div class="analysis-card" onclick="document.querySelector('[key=\\'forecasting_hidden\\']').click()">
+        <div class="analysis-card" onclick="document.querySelector('[key=\\'forecasting_card\\']').click()">
             <div style="
                 background-color: white;
                 border: 4px solid #10aab7;
@@ -348,11 +349,11 @@ def page_analysis():
 
     # EOQ Card
     with col2:
-        if st.button("", key="eoq_hidden", help="Click to go to EOQ"):
+        if st.button("", key="eoq_card", help="Click anywhere on the card to go to EOQ"):
             st.session_state.page = 5
             st.rerun()
         st.markdown(f"""
-        <div class="analysis-card" onclick="document.querySelector('[key=\\'eoq_hidden\\']').click()">
+        <div class="analysis-card" onclick="document.querySelector('[key=\\'eoq_card\\']').click()">
             <div style="
                 background-color: white;
                 border: 4px solid #10aab7;
@@ -374,11 +375,11 @@ def page_analysis():
 
     # Safety Stock Card
     with col3:
-        if st.button("", key="safety_hidden", help="Click to go to Safety Stock"):
+        if st.button("", key="safety_card", help="Click anywhere on the card to go to Safety Stock"):
             st.session_state.page = 6
             st.rerun()
         st.markdown(f"""
-        <div class="analysis-card" onclick="document.querySelector('[key=\\'safety_hidden\\']').click()">
+        <div class="analysis-card" onclick="document.querySelector('[key=\\'safety_card\\']').click()">
             <div style="
                 background-color: white;
                 border: 4px solid #10aab7;
@@ -618,4 +619,5 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
 
