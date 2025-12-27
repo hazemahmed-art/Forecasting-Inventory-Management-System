@@ -314,29 +314,34 @@ def page_analysis():
     st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
 
-    # جعل الراير (الأعمدة) أكبر مع مسافات مناسبة
-    col1, spacer1, col2, spacer2, col3 = st.columns([1, 0.2, 1, 0.2, 1])
+    # زيادة المسافة العلوية قليلاً للجمال
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # 3 أعمدة متساوية مع مسافات مناسبة
+    col1, spacer1, col2, spacer2, col3 = st.columns([1, 0.3, 1, 0.3, 1])
 
     with col1:
-        if st.button("📈 Forecasting", use_container_width=True, type="primary"):
+        if st.button("📈 Forecasting", use_container_width=True, type="primary", key="btn_forecast"):
             st.session_state.page = 4
             st.rerun()
 
     with col2:
-        if st.button("📦 EOQ", use_container_width=True, type="primary"):
+        if st.button("📦 Economic Order Quantity (EOQ)", use_container_width=True, type="primary", key="btn_eoq"):
             st.session_state.page = 5
             st.rerun()
 
     with col3:
-        if st.button("🛡️ Safety Stock", use_container_width=True, type="primary"):
+        if st.button("🛡️ Safety Stock", use_container_width=True, type="primary", key="btn_safety"):
             st.session_state.page = 6
             st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅ Back to Data Editing"):
+    # مسافة كبيرة قبل زرار الرجوع
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    
+    # زرار الرجوع أكبر وأوضح
+    if st.button("⬅ Back to Data Editing", use_container_width=True, type="secondary"):
         st.session_state.page = 2
         st.rerun()
-
 # ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
     st.title("📈 Forecasting Analysis")
@@ -553,3 +558,4 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
