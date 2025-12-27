@@ -5,13 +5,9 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-# ================= تحميل التنسيق الخارجي بطريقة آمنة =================
-css_file_path = "style.css"
-if os.path.exists(css_file_path):
-    with open(css_file_path, "r", encoding="utf-8") as css_file:
-        st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
-else:
-    st.error("⚠️ ملف style.css مش موجود في نفس مجلد app.py – التنسيق مش هيشتغل")
+# ================= تحميل التنسيق الخارجي =================
+with open("style.css") as css_file:
+    st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
 
 # ================= Page Config =================
 st.set_page_config(page_title="Forecasting & Inventory Management System", layout="wide")
@@ -223,14 +219,12 @@ def edit_table(file_path, period):
 
 # ================= Pages =================
 def page_material_selection():
-    st.markdown('<div data-page-title="Material Selection"></div>', unsafe_allow_html=True)
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
         st.session_state.page = 2
         st.rerun()
 
 def page_selected_material():
-    st.markdown('<div data-page-title="Data Source & Editing"></div>', unsafe_allow_html=True)
     st.title("Selected Material")
     st.markdown(f"**{st.session_state.material['family']} / {st.session_state.material['type']} / {st.session_state.material['grade']}**")
 
@@ -269,7 +263,6 @@ def page_selected_material():
         edit_table(st.session_state.file, st.session_state.period)
 
 def page_analysis():
-    st.markdown('<div data-page-title="Analysis Menu"></div>', unsafe_allow_html=True)
     st.title("Analysis & Calculations")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -288,8 +281,8 @@ def page_analysis():
         st.session_state.page = 2
         st.rerun()
 
+# ================= Forecasting Page =================
 def page_forecasting():
-    st.markdown('<div data-page-title="Forecasting Analysis"></div>', unsafe_allow_html=True)
     st.title("📈 Forecasting Analysis")
 
     mat = st.session_state.material
@@ -319,12 +312,14 @@ def page_forecasting():
                 results = {}
                 errors = []
 
+                # Naive
                 df_n = run_naive_forecasting(df_base.copy(), first_col)
                 mad_n = calculate_mad(df_n, forecast_col="Naive Forecast")
                 mse_n = calculate_mse(df_n, forecast_col="Naive Forecast")
                 results["Naive"] = df_n
                 errors.append({"Method": "Naive", "MAD": mad_n, "MSE": mse_n})
 
+                # Moving Average
                 ma_n = 3
                 df_ma = run_moving_average_forecasting(df_base.copy(), first_col, n=ma_n)
                 mad_ma = calculate_mad(df_ma, forecast_col="Moving Avg Forecast")
@@ -332,6 +327,7 @@ def page_forecasting():
                 results["Moving Average"] = df_ma
                 errors.append({"Method": "Moving Average", "MAD": mad_ma, "MSE": mse_ma})
 
+                # Exponential Smoothing
                 alpha = 0.3
                 df_exp = run_exponential_forecasting(df_base.copy(), first_col, alpha=alpha)
                 mad_exp = calculate_mad(df_exp, forecast_col="Exponential Forecast")
@@ -420,8 +416,8 @@ def page_forecasting():
         st.session_state.page = 3
         st.rerun()
 
+# ================= EOQ Page =================
 def page_eoq():
-    st.markdown('<div data-page-title="EOQ & Reorder Point"></div>', unsafe_allow_html=True)
     st.title("📦 Economic Order Quantity (EOQ) & Reorder Point")
 
     mat = st.session_state.material
@@ -490,8 +486,8 @@ def page_eoq():
         st.session_state.page = 3
         st.rerun()
 
+# ================= Safety Stock Page =================
 def page_safety_stock():
-    st.markdown('<div data-page-title="Safety Stock Calculation"></div>', unsafe_allow_html=True)
     st.title("🛡️ Safety Stock Calculation")
 
     mat = st.session_state.material
