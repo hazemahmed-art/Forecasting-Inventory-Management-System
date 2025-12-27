@@ -37,6 +37,21 @@ try:
 except Exception as e:
     st.error(f"Cannot read 'Classification-of-Material.xlsx': {e}")
     st.stop()
+
+# ================= Reduce Top Padding (bring content closer to top) =================
+st.markdown("""
+<style>
+    /* Reduce the default top padding of the main content area */
+    .block-container {
+        padding-top: 2rem !important;
+    }
+    /* Also reduce header padding if needed */
+    header {
+        padding-top: 0 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # ================= Helper Functions =================
 def select_material(df):
     st.markdown("## Select a Target Material")
@@ -235,81 +250,6 @@ with st.sidebar:
    
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
-
-# ================= FLOATING HELP BUTTON (Bottom Left - White Background) =================
-# Force white background for the whole app
-st.markdown("""
-<style>
-    .stApp {
-        background-color: white;
-        color: black;
-    }
-    .help-button {
-        position: fixed;
-        bottom: 30px;
-        left: 30px;          /* Moved to bottom left */
-        z-index: 1000;
-    }
-    .help-button button {
-        width: 50px;         /* Smaller button */
-        height: 50px;
-        border-radius: 50%;
-        background-color: #fa7328;
-        color: white;
-        font-size: 24px;
-        border: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .help-button button:hover {
-        background-color: #e0651f;
-        transform: scale(1.1);
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Floating Help Button (now on bottom left)
-with st.container():
-    col1, col2 = st.columns([1,9])
-    with col1:
-        if st.button("❓", key="help_button", help="Click for guidance"):
-            st.session_state.show_help = True if not st.session_state.get("show_help") else False
-            st.rerun()
-
-# Help Message (appears when button is clicked)
-if st.session_state.get("show_help", False):
-    st.markdown("""
-    <div style="
-        position: fixed;
-        bottom: 100px;
-        left: 30px;
-        width: 380px;
-        background-color: white;
-        color: black;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        border: 2px solid #fa7328;
-        z-index: 999;
-    ">
-        <h3 style="margin-top:0; color:#fa7328;">📋 How to Use This System</h3>
-        <p><strong>1. Material Selection</strong><br>Choose Family → Type → Grade from the database.</p>
-        <p><strong>2. Data & Table</strong><br>Select period, upload or choose historical demand file, view/edit data.</p>
-        <p><strong>3. Analysis Menu</strong><br>Choose one of the analyses:</p>
-        <ul>
-            <li><strong>📈 Forecasting</strong>: Compare Naive, Moving Average & Exponential Smoothing → get best forecast.</li>
-            <li><strong>📦 EOQ</strong>: Calculate optimal order quantity and reorder point.</li>
-            <li><strong>🛡️ Safety Stock</strong>: Fixed or statistical based on service level.</li>
-        </ul>
-        <p>Use the sidebar to navigate between steps anytime.</p>
-        <div style="text-align:right; margin-top:15px;">
-            <strong>Click ❓ again to close</strong>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
