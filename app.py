@@ -208,10 +208,12 @@ def edit_table(file_path, period):
                 st.rerun()
 
 # ================= SIDEBAR: Navigation & Current Selection Info =================
+# This section creates a persistent sidebar that appears on every screen
 with st.sidebar:
     st.header("📊 Forecasting & Inventory System")
     st.markdown("---")
     
+    # Show current selected material (if any)
     if st.session_state.material:
         st.subheader("Selected Material")
         st.write(f"**Family:** {st.session_state.material.get('family', '-')}") 
@@ -221,6 +223,7 @@ with st.sidebar:
             st.write(f"**Period:** {st.session_state.period}")
         st.markdown("---")
     
+    # Navigation buttons in sidebar
     st.subheader("Navigation")
     
     if st.button("🏠 Material Selection", use_container_width=True):
@@ -230,7 +233,7 @@ with st.sidebar:
         st.session_state.editing = False
         st.rerun()
     
-    if st.session_state.material:
+    if st.session_state.material:  # Only show further navigation after material is selected
         if st.button("📁 Data & Table", use_container_width=True):
             st.session_state.page = 2
             st.rerun()
@@ -254,97 +257,9 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
 
-# ================= TOP NAVIGATION BAR: Professional with Logo, Page Title & Settings =================
-# Custom CSS for enhanced top bar
-st.markdown("""
-<style>
-    .top-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 70px;
-        background-color: #0e1117;
-        border-bottom: 3px solid #fa7328;
-        display: flex;
-        align-items: center;
-        padding: 0 2rem;
-        z-index: 999;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    .logo-section {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    .logo-section img {
-        height: 44px;
-        border-radius: 8px;
-    }
-    .logo-text {
-        color: #fa7328;
-        font-size: 1.6rem;
-        font-weight: bold;
-        margin: 0;
-    }
-    .page-title {
-        color: #ffffff;
-        font-size: 1.4rem;
-        font-weight: 600;
-        margin-left: 30px;
-        flex-grow: 1;
-    }
-    .settings-btn {
-        background-color: #fa7328;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    .settings-btn:hover {
-        background-color: #e0651f;
-        transform: translateY(-2px);
-    }
-    .main-content {
-        margin-top: 90px;
-        padding: 1rem 2rem;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Determine current page title
-page_titles = {
-    1: "Material Selection",
-    2: "Data & Table",
-    3: "Analysis Menu",
-    4: "Forecasting",
-    5: "Economic Order Quantity",
-    6: "Safety Stock"
-}
-current_title = page_titles.get(st.session_state.page, "Dashboard")
-
-# Top Bar HTML with logo (assuming logo.png is in the same folder)
-top_bar_html = f"""
-<div class="top-bar">
-    <div class="logo-section">
-        <img src="logo.png" alt="Logo">
-        <h2 class="logo-text">Logo</h2>
-    </div>
-    <div class="page-title">{current_title}</div>
-    <button class="settings-btn">⚙️ Settings</button>
-</div>
-"""
-st.markdown(top_bar_html, unsafe_allow_html=True)
-
-# Padding for main content
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
-
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
-    # Removed st.title() because it's now shown in the top bar
+    st.title("Welcome to Forecasting & Inventory Management System")
     st.markdown("### Step 1: Select the Material you want to analyze")
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
@@ -353,7 +268,7 @@ def page_material_selection():
 
 # ================= SCREEN 2: Data Selection & Table View/Edit =================
 def page_selected_material():
-    # Removed st.title()
+    st.title("Selected Material")
     st.markdown(f"**{st.session_state.material['family']} / {st.session_state.material['type']} / {st.session_state.material['grade']}**")
     st.session_state.period = select_period()
     family = st.session_state.material['family']
@@ -388,7 +303,7 @@ def page_selected_material():
 
 # ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
-    # Removed st.title()
+    st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -409,15 +324,15 @@ def page_analysis():
 
 # ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
-    # Removed st.title()
+    st.title("📈 Forecasting Analysis")
     mat = st.session_state.material
     period_name = st.session_state.period
     first_col = PERIOD_COLUMN_MAP[period_name]
     df_base = st.session_state.df.copy()
     st.markdown(
         f"""
-        **Material:** {mat['family']} / {mat['type']} / {mat['grade']} &nbsp;&nbsp;|&nbsp;&nbsp;
-        **Period:** {period_name} &nbsp;&nbsp;|&nbsp;&nbsp;
+        **Material:** {mat['family']} / {mat['type']} / {mat['grade']}   |  
+        **Period:** {period_name}   |  
         **Records:** {len(df_base)}
         """
     )
@@ -521,7 +436,7 @@ def page_forecasting():
 
 # ================= SCREEN 5: EOQ Calculation =================
 def page_eoq():
-    # Removed st.title()
+    st.title("📦 Economic Order Quantity (EOQ) & Reorder Point")
     mat = st.session_state.material
     st.markdown(f"**Material:** {mat['family']} / {mat['type']} / {mat['grade']}")
     st.divider()
@@ -578,7 +493,7 @@ def page_eoq():
 
 # ================= SCREEN 6: Safety Stock Calculation =================
 def page_safety_stock():
-    # Removed st.title()
+    st.title("🛡️ Safety Stock Calculation")
     mat = st.session_state.material
     st.markdown(f"**Material:** {mat['family']} / {mat['type']} / {mat['grade']}")
     st.divider()
@@ -609,9 +524,6 @@ def page_safety_stock():
     if st.button("⬅ Back to Analysis"):
         st.session_state.page = 3
         st.rerun()
-
-# Close main-content div
-st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= Main Navigation =================
 if st.session_state.page == 1:
