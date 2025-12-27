@@ -320,89 +320,88 @@ def page_analysis():
 
     col1, col2, col3 = st.columns(3)
 
+    # Forecasting Card
     with col1:
-        st.markdown("""
-        <div style="
-            background-color: white;
-            border: 3px solid #fa7328;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            height: 380px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        ">
-            <h3 style="background-color: #fa7328; color: white; padding: 12px; border-radius: 8px; margin: -20px -20px 20px -20px;">
-                📈 Forecasting
-            </h3>
-            <img src="images/forecasting.png" style="max-width: 100%; height: auto; border-radius: 8px;">
-            <p style="font-size: 0.9rem; color: #555555; margin-top: 15px;">
-                Compare different forecasting methods and select the best one based on error metrics.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        if st.button("Go to Forecasting ➜", type="primary", use_container_width=True):
+        if st.button("", key="forecasting_hidden", help="Click to go to Forecasting"):  # Hidden button
             st.session_state.page = 4
             st.rerun()
-
-    with col2:
-        st.markdown("""
-        <div style="
-            background-color: white;
-            border: 3px solid #fa7328;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            height: 380px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        ">
-            <h3 style="background-color: #fa7328; color: white; padding: 12px; border-radius: 8px; margin: -20px -20px 20px -20px;">
-                📦 Economic Order Quantity (EOQ)
-            </h3>
-            <img src="images/eoq.png" style="max-width: 100%; height: auto; border-radius: 8px;">
-            <p style="font-size: 0.9rem; color: #555555; margin-top: 15px;">
-                Calculate the optimal order quantity and reorder point to minimize inventory costs.
-            </p>
+        st.markdown(f"""
+        <div class="analysis-card" onclick="document.querySelector('[key=\\'forecasting_hidden\\']').click()">
+            <div style="
+                background-color: white;
+                border: 4px solid #10aab7;
+                border-radius: 16px;
+                padding: 30px;
+                text-align: center;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            ">
+                <h3 style="background-color: #10aab7; color: white; padding: 16px; border-radius: 12px; margin: -30px -30px 30px -30px; font-size: 1.6rem;">
+                    📈 Forecasting
+                </h3>
+                <img src="images/forecasting.png" style="max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0;">
+                <p style="font-size: 1rem; color: #555555; line-height: 1.6;">
+                    Compare different forecasting methods and select the best one based on error metrics.
+                </p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Go to EOQ ➜", type="primary", use_container_width=True):
+
+    # EOQ Card
+    with col2:
+        if st.button("", key="eoq_hidden", help="Click to go to EOQ"):
             st.session_state.page = 5
             st.rerun()
-
-    with col3:
-        st.markdown("""
-        <div style="
-            background-color: white;
-            border: 3px solid #fa7328;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            height: 380px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        ">
-            <h3 style="background-color: #fa7328; color: white; padding: 12px; border-radius: 8px; margin: -20px -20px 20px -20px;">
-                🛡️ Safety Stock
-            </h3>
-            <img src="images/safetystock.png" style="max-width: 100%; height: auto; border-radius: 8px;">
-            <p style="font-size: 0.9rem; color: #555555; margin-top: 15px;">
-                Determine the safety stock level using fixed or statistical methods based on service level.
-            </p>
+        st.markdown(f"""
+        <div class="analysis-card" onclick="document.querySelector('[key=\\'eoq_hidden\\']').click()">
+            <div style="
+                background-color: white;
+                border: 4px solid #10aab7;
+                border-radius: 16px;
+                padding: 30px;
+                text-align: center;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            ">
+                <h3 style="background-color: #10aab7; color: white; padding: 16px; border-radius: 12px; margin: -30px -30px 30px -30px; font-size: 1.6rem;">
+                    📦 Economic Order Quantity (EOQ)
+                </h3>
+                <img src="images/eoq.png" style="max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0;">
+                <p style="font-size: 1rem; color: #555555; line-height: 1.6;">
+                    Calculate the optimal order quantity and reorder point to minimize inventory costs.
+                </p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button("Go to Safety Stock ➜", type="primary", use_container_width=True):
+
+    # Safety Stock Card
+    with col3:
+        if st.button("", key="safety_hidden", help="Click to go to Safety Stock"):
             st.session_state.page = 6
             st.rerun()
+        st.markdown(f"""
+        <div class="analysis-card" onclick="document.querySelector('[key=\\'safety_hidden\\']').click()">
+            <div style="
+                background-color: white;
+                border: 4px solid #10aab7;
+                border-radius: 16px;
+                padding: 30px;
+                text-align: center;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            ">
+                <h3 style="background-color: #10aab7; color: white; padding: 16px; border-radius: 12px; margin: -30px -30px 30px -30px; font-size: 1.6rem;">
+                    🛡️ Safety Stock
+                </h3>
+                <img src="images/safetystock.png" style="max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0;">
+                <p style="font-size: 1rem; color: #555555; line-height: 1.6;">
+                    Determine the safety stock level using fixed or statistical methods based on service level.
+                </p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("⬅ Back to Data Editing"):
         st.session_state.page = 2
         st.rerun()
-
 # ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
     st.title("📈 Forecasting Analysis")
@@ -619,3 +618,4 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
