@@ -45,34 +45,64 @@ st.markdown("""
     .block-container {
         padding-top: 2rem !important;
     }
-    /* Also reduce header padding if needed */
-    header {
-        padding-top: 0 !important;
+    /* Custom styles for larger selectboxes in page 1 */
+    div[data-testid="column"]:nth-child(1) .stSelectbox > div > div > div {
+        font-size: 1.4rem !important;
+        padding: 1rem !important;
+    }
+    div[data-testid="column"]:nth-child(2) .stSelectbox > div > div > div {
+        font-size: 1.4rem !important;
+        padding: 1rem !important;
+    }
+    div[data-testid="column"]:nth-child(3) .stSelectbox > div > div > div {
+        font-size: 1.4rem !important;
+        padding: 1rem !important;
+    }
+    /* Remove primary color from the step description */
+    .step-description {
+        color: #333333 !important;
+        font-size: 1.3rem !important;
+    }
+    /* Page 2: Period selectbox half width */
+    .period-select {
+        max-width: 50% !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ================= Helper Functions =================
 def select_material(df):
-    st.markdown("## Select a Target Material")
+    st.markdown('<p class="step-description">Step 1: Select the Material you want to analyze</p>', unsafe_allow_html=True)
+    st.markdown("### Select a Target Material")
     c1, c2, c3 = st.columns(3)
     with c1:
-        family = st.selectbox("Material Family", sorted(df["MaterialFamily"].unique()), key="fam_sel")
+        family = st.selectbox("**Material Family**", sorted(df["MaterialFamily"].unique()), key="fam_sel")
     family_df = df[df["MaterialFamily"] == family]
     with c2:
-        m_type = st.selectbox("Material Type", sorted(family_df["MaterialType"].unique()), key="type_sel")
+        m_type = st.selectbox("**Material Type**", sorted(family_df["MaterialType"].unique()), key="type_sel")
     type_df = family_df[family_df["MaterialType"] == m_type]
     with c3:
-        grade = st.selectbox("Material Grade", sorted(type_df["MaterialGrade"].unique()), key="grade_sel")
-    st.caption(f"Selected → **{family} / {m_type} / {grade}**")
+        grade = st.selectbox("**Material Grade**", sorted(type_df["MaterialGrade"].unique()), key="grade_sel")
+    st.markdown(f"<h4 style='margin-top:20px;'>Selected → <strong>{family} / {m_type} / {grade}</strong></h4>", unsafe_allow_html=True)
     st.divider()
     return {"family": family, "type": m_type, "grade": grade}
+
 def select_period():
-    st.markdown("## Select Data Period")
-    return st.selectbox("Period", list(PERIOD_COLUMN_MAP.keys()), key="period_select")
+    st.markdown("### Select Data Period")
+    # Half width for period selectbox
+    col_period, _ = st.columns([1, 1])
+    with col_period:
+        st.markdown('<div class="period-select">', unsafe_allow_html=True)
+        period = st.selectbox("Period", list(PERIOD_COLUMN_MAP.keys()), key="period_select")
+        st.markdown('</div>', unsafe_allow_html=True)
+    return period
+
 def choose_data_source(period, family, m_type, grade):
-    st.markdown("## Data Source")
-    source = st.radio("Choose source", ["Upload Excel File", "Choose Existing File"], horizontal=True, key="data_source_radio")
+    st.markdown("### Data Source")
+    # Half width for the radio buttons
+    col_source, _ = st.columns([1, 1])
+    with col_source:
+        source = st.radio("Choose source", ["Upload Excel File", "Choose Existing File"], horizontal=True, key="data_source_radio")
     folder = f"Uploaded/{family}/{m_type}/{grade}/{period}"
     os.makedirs(folder, exist_ok=True)
     selected_file = None
@@ -92,6 +122,7 @@ def choose_data_source(period, family, m_type, grade):
         else:
             st.info("No uploaded files found for this period yet.")
     return selected_file
+
 def load_table(file_path):
     try:
         df = pd.read_excel(file_path)
@@ -205,10 +236,7 @@ def edit_table(file_path, period):
             if st.button("Cancel"):
                 st.rerun()
 # ================= SIDEBAR: Navigation & Current Selection Info =================
-# This section creates a persistent sidebar that appears on every screen
 with st.sidebar:
-   
-    # Show current selected material (if any)
     if st.session_state.material:
         st.subheader("Selected Material")
         st.write(f"**Family:** {st.session_state.material.get('family', '-')}")
@@ -216,45 +244,35 @@ with st.sidebar:
         st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}")
         if st.session_state.period:
             st.write(f"**Period:** {st.session_state.period}")
-   
-    # Navigation buttons in sidebar
     st.subheader("Navigation")
-   
     if st.button("🏠 Material Selection", use_container_width=True):
         st.session_state.page = 1
         st.session_state.df = None
         st.session_state.file = None
         st.session_state.editing = False
         st.rerun()
-   
-    if st.session_state.material: # Only show further navigation after material is selected
+    if st.session_state.material:
         if st.button("📁 Data & Table", use_container_width=True):
             st.session_state.page = 2
             st.rerun()
-       
         if st.button("🔍 Analysis Menu", use_container_width=True):
             st.session_state.page = 3
             st.rerun()
-       
         if st.button("📈 Forecasting", use_container_width=True):
             st.session_state.page = 4
             st.rerun()
-       
         if st.button("📦 EOQ", use_container_width=True):
             st.session_state.page = 5
             st.rerun()
-       
         if st.button("🛡️ Safety Stock", use_container_width=True):
             st.session_state.page = 6
             st.rerun()
-   
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
 
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
     st.title("Welcome to Forecasting & Inventory Management System")
-    st.markdown("### Step 1: Select the Material you want to analyze")
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
         st.session_state.page = 2
