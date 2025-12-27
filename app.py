@@ -3,14 +3,11 @@ import streamlit as st
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-
 # ================= External Styling =================
 with open("style.css") as css_file:
     st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
-
 # ================= Page Config =================
 st.set_page_config(page_title="Forecasting & Inventory Management System", layout="wide")
-
 # ================= Constants =================
 PERIOD_COLUMN_MAP = {
     "Weekly": "Week",
@@ -19,7 +16,6 @@ PERIOD_COLUMN_MAP = {
     "Semi-Annual": "Half",
     "Annual": "Year"
 }
-
 # ================= Session State Initialization =================
 if "page" not in st.session_state:
     st.session_state.page = 1
@@ -35,14 +31,12 @@ if "show_table" not in st.session_state:
     st.session_state.show_table = False
 if "editing" not in st.session_state:
     st.session_state.editing = False
-
 # ================= Load Material Classification =================
 try:
     df_class = pd.read_excel("Database/Classification-of-Material.xlsx")
 except Exception as e:
     st.error(f"Cannot read 'Classification-of-Material.xlsx': {e}")
     st.stop()
-
 # ================= Helper Functions =================
 def select_material(df):
     st.markdown("## Select a Target Material")
@@ -58,11 +52,9 @@ def select_material(df):
     st.caption(f"Selected → **{family} / {m_type} / {grade}**")
     st.divider()
     return {"family": family, "type": m_type, "grade": grade}
-
 def select_period():
     st.markdown("## Select Data Period")
     return st.selectbox("Period", list(PERIOD_COLUMN_MAP.keys()), key="period_select")
-
 def choose_data_source(period, family, m_type, grade):
     st.markdown("## Data Source")
     source = st.radio("Choose source", ["Upload Excel File", "Choose Existing File"], horizontal=True, key="data_source_radio")
@@ -85,7 +77,6 @@ def choose_data_source(period, family, m_type, grade):
         else:
             st.info("No uploaded files found for this period yet.")
     return selected_file
-
 def load_table(file_path):
     try:
         df = pd.read_excel(file_path)
@@ -95,26 +86,21 @@ def load_table(file_path):
     except Exception as e:
         st.error(f"Error loading file: {e}")
         return None
-
 def view_table():
     st.subheader("Table Preview")
     st.dataframe(st.session_state.df, use_container_width=True)
-
 def renumber_first_column(df, first_col):
     df[first_col] = range(1, len(df) + 1)
     return df
-
 # ================= Forecasting Functions =================
 def run_naive_forecasting(df, first_col):
     df = df.copy()
     df["Naive Forecast"] = df["Demand"].shift(1).fillna(df["Demand"].iloc[0])
     return df
-
 def run_moving_average_forecasting(df, first_col, n=3):
     df = df.copy()
     df["Moving Avg Forecast"] = df["Demand"].rolling(n, min_periods=1).mean().shift(1).fillna(df["Demand"].iloc[0])
     return df
-
 def run_exponential_forecasting(df, first_col, alpha=0.3):
     df = df.copy()
     fc = [df["Demand"].iloc[0]]
@@ -122,18 +108,15 @@ def run_exponential_forecasting(df, first_col, alpha=0.3):
         fc.append(alpha * d + (1 - alpha) * fc[-1])
     df["Exponential Forecast"] = fc
     return df
-
 # ================= Error Calculations =================
 def calculate_mad(df, actual_col="Demand", forecast_col="Forecast"):
     df = df.copy()
     df["Abs Error"] = (df[actual_col] - df[forecast_col]).abs()
     return df["Abs Error"].mean()
-
 def calculate_mse(df, actual_col="Demand", forecast_col="Forecast"):
     df = df.copy()
     df["Squared Error"] = (df[actual_col] - df[forecast_col]) ** 2
     return df["Squared Error"].mean()
-
 # ================= Edit Table Function =================
 def edit_table(file_path, period):
     st.subheader("✏ Edit / Add / Delete Data")
@@ -206,56 +189,127 @@ def edit_table(file_path, period):
         with c2:
             if st.button("Cancel"):
                 st.rerun()
-
 # ================= SIDEBAR: Navigation & Current Selection Info =================
 # This section creates a persistent sidebar that appears on every screen
 with st.sidebar:
-    st.header("📊 Forecasting & Inventory System")
-    st.markdown("---")
-    
+   
     # Show current selected material (if any)
     if st.session_state.material:
         st.subheader("Selected Material")
-        st.write(f"**Family:** {st.session_state.material.get('family', '-')}") 
-        st.write(f"**Type:** {st.session_state.material.get('type', '-')}") 
-        st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}") 
+        st.write(f"**Family:** {st.session_state.material.get('family', '-')}")
+        st.write(f"**Type:** {st.session_state.material.get('type', '-')}")
+        st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}")
         if st.session_state.period:
             st.write(f"**Period:** {st.session_state.period}")
-        st.markdown("---")
-    
+   
     # Navigation buttons in sidebar
     st.subheader("Navigation")
-    
+   
     if st.button("🏠 Material Selection", use_container_width=True):
         st.session_state.page = 1
         st.session_state.df = None
         st.session_state.file = None
         st.session_state.editing = False
         st.rerun()
-    
-    if st.session_state.material:  # Only show further navigation after material is selected
+   
+    if st.session_state.material: # Only show further navigation after material is selected
         if st.button("📁 Data & Table", use_container_width=True):
             st.session_state.page = 2
             st.rerun()
-        
+       
         if st.button("🔍 Analysis Menu", use_container_width=True):
             st.session_state.page = 3
             st.rerun()
-        
+       
         if st.button("📈 Forecasting", use_container_width=True):
             st.session_state.page = 4
             st.rerun()
-        
+       
         if st.button("📦 EOQ", use_container_width=True):
             st.session_state.page = 5
             st.rerun()
-        
+       
         if st.button("🛡️ Safety Stock", use_container_width=True):
             st.session_state.page = 6
             st.rerun()
-    
+   
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
+
+# ================= FLOATING HELP BUTTON (Bottom Right) =================
+# Custom CSS for the floating help button
+st.markdown("""
+<style>
+    .help-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+    }
+    .help-button button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #fa7328;
+        color: white;
+        font-size: 28px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .help-button button:hover {
+        background-color: #e0651f;
+        transform: scale(1.1);
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Floating Help Button
+with st.container():
+    col1, col2, col3 = st.columns([8,1,1])
+    with col3:
+        if st.button("❓", key="help_button", help="Click for guidance"):
+            st.session_state.show_help = True
+
+# Help Message (appears when button is clicked)
+if st.session_state.get("show_help", False):
+    st.markdown("""
+    <div style="
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 380px;
+        background-color: #1e1e1e;
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        border: 2px solid #fa7328;
+        z-index: 999;
+    ">
+        <h3 style="margin-top:0; color:#fa7328;">📋 How to Use This System</h3>
+        <p><strong>1. Material Selection</strong><br>Choose Family → Type → Grade from the database.</p>
+        <p><strong>2. Data & Table</strong><br>Select period, upload or choose historical demand file, view/edit data.</p>
+        <p><strong>3. Analysis Menu</strong><br>Choose one of the analyses:</p>
+        <ul>
+            <li><strong>📈 Forecasting</strong>: Compare Naive, Moving Average & Exponential Smoothing → get best forecast.</li>
+            <li><strong>📦 EOQ</strong>: Calculate optimal order quantity and reorder point.</li>
+            <li><strong>🛡️ Safety Stock</strong>: Fixed or statistical based on service level.</li>
+        </ul>
+        <p>Use the sidebar to navigate between steps anytime.</p>
+        <div style="text-align:right; margin-top:15px;">
+            <strong>Click ❓ again to close</strong>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Clicking the button again closes the help
+    if st.button("❓", key="help_button_close"):
+        st.session_state.show_help = False
+        st.rerun()
 
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
@@ -265,7 +319,6 @@ def page_material_selection():
     if st.button("Next ➜", type="primary"):
         st.session_state.page = 2
         st.rerun()
-
 # ================= SCREEN 2: Data Selection & Table View/Edit =================
 def page_selected_material():
     st.title("Selected Material")
@@ -300,7 +353,6 @@ def page_selected_material():
         view_table()
     if st.session_state.editing:
         edit_table(st.session_state.file, st.session_state.period)
-
 # ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
     st.title("Analysis & Calculations")
@@ -321,7 +373,6 @@ def page_analysis():
     if st.button("⬅ Back to Data Editing"):
         st.session_state.page = 2
         st.rerun()
-
 # ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
     st.title("📈 Forecasting Analysis")
@@ -430,10 +481,9 @@ def page_forecasting():
         keys_to_clear = ["forecast_ran", "best_method", "best_error", "all_results", "all_errors", "selected_criteria"]
         for key in keys_to_clear:
             if key in st.session_state:
-                del st.session_state[key]
+                del st.key
         st.session_state.page = 3
         st.rerun()
-
 # ================= SCREEN 5: EOQ Calculation =================
 def page_eoq():
     st.title("📦 Economic Order Quantity (EOQ) & Reorder Point")
@@ -490,7 +540,6 @@ def page_eoq():
     if st.button("⬅ Back to Analysis"):
         st.session_state.page = 3
         st.rerun()
-
 # ================= SCREEN 6: Safety Stock Calculation =================
 def page_safety_stock():
     st.title("🛡️ Safety Stock Calculation")
@@ -524,7 +573,6 @@ def page_safety_stock():
     if st.button("⬅ Back to Analysis"):
         st.session_state.page = 3
         st.rerun()
-
 # ================= Main Navigation =================
 if st.session_state.page == 1:
     page_material_selection()
