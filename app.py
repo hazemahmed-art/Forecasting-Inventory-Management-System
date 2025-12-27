@@ -5,9 +5,13 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 
-# ================= تحميل التنسيق الخارجي =================
-with open("style.css") as css_file:
-    st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
+# ================= تحميل التنسيق الخارجي بطريقة آمنة =================
+css_file_path = "style.css"
+if os.path.exists(css_file_path):
+    with open(css_file_path, "r", encoding="utf-8") as css_file:
+        st.markdown(f"<style>{css_file.read()}</style>", unsafe_allow_html=True)
+else:
+    st.error("⚠️ ملف style.css مش موجود في نفس مجلد app.py – التنسيق مش هيشتغل")
 
 # ================= Page Config =================
 st.set_page_config(page_title="Forecasting & Inventory Management System", layout="wide")
@@ -46,7 +50,7 @@ except Exception as e:
 
 # ================= Functions =================
 def select_material(df):
-    st.markdown("## Select aa Target Material")
+    st.markdown("## Select a Target Material")
     c1, c2, c3 = st.columns(3)
     with c1:
         family = st.selectbox("Material Family", sorted(df["MaterialFamily"].unique()), key="fam_sel")
@@ -544,4 +548,3 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
-
