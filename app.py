@@ -44,21 +44,15 @@ st.markdown("""
     .block-container {
         padding-top: 2rem !important;
     }
-    /* Style the dataframe in page 2 when shown */
-    .page2-table .stDataFrame data-frame {
-        font-size: 1.4rem !important;
+    /* Highlight active navigation button in sidebar */
+    .active-nav-button {
+        background-color: #fa7328 !important;
+        color: white !important;
         font-weight: bold !important;
+        border-radius: 8px !important;
     }
-    .page2-table thead th {
-        font-size: 1.5rem !important;
-        font-weight: bold !important;
-        background-color: #f0f2f6 !important;
-        color: #212529 !important;
-    }
-    .page2-table tbody td {
-        font-size: 1.4rem !important;
-        font-weight: bold !important;
-        padding: 1rem !important;
+    .active-nav-button:hover {
+        background-color: #e0651f !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -118,22 +112,7 @@ def load_table(file_path):
 
 def view_table():
     st.subheader("Table Preview")
-    # Apply custom styling to the dataframe
-    styled_df = st.session_state.df.style.set_properties(**{
-        'font-size': '1.4rem',
-        'font-weight': 'bold',
-        'padding': '1rem',
-        'text-align': 'center'
-    }).set_table_styles([
-        {'selector': 'th', 'props': [
-            ('font-size', '1.5rem'),
-            ('font-weight', 'bold'),
-            ('background-color', '#f0f2f6'),
-            ('color', '#212529'),
-            ('padding', '1rem')
-        ]}
-    ])
-    st.dataframe(styled_df, use_container_width=True)
+    st.dataframe(st.session_state.df, use_container_width=True)
 
 def renumber_first_column(df, first_col):
     df[first_col] = range(1, len(df) + 1)
@@ -242,7 +221,7 @@ def edit_table(file_path, period):
             if st.button("Cancel"):
                 st.rerun()
 
-# ================= SIDEBAR: Navigation & Current Selection Info =================
+# ================= SIDEBAR: Navigation with Active Highlight =================
 with st.sidebar:
     if st.session_state.material:
         st.subheader("Selected Material")
@@ -251,29 +230,61 @@ with st.sidebar:
         st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}")
         if st.session_state.period:
             st.write(f"**Period:** {st.session_state.period}")
+    
     st.subheader("Navigation")
-    if st.button("🏠 Material Selection", use_container_width=True):
-        st.session_state.page = 1
-        st.session_state.df = None
-        st.session_state.file = None
-        st.session_state.editing = False
-        st.rerun()
+    
+    # Material Selection button
+    if st.session_state.page == 1:
+        st.markdown('<div class="active-nav-button">🏠 Material Selection</div>', unsafe_allow_html=True)
+    else:
+        if st.button("🏠 Material Selection", use_container_width=True):
+            st.session_state.page = 1
+            st.session_state.df = None
+            st.session_state.file = None
+            st.session_state.editing = False
+            st.rerun()
+    
     if st.session_state.material:
-        if st.button("📁 Data & Table", use_container_width=True):
-            st.session_state.page = 2
-            st.rerun()
-        if st.button("🔍 Analysis Menu", use_container_width=True):
-            st.session_state.page = 3
-            st.rerun()
-        if st.button("📈 Forecasting", use_container_width=True):
-            st.session_state.page = 4
-            st.rerun()
-        if st.button("📦 EOQ", use_container_width=True):
-            st.session_state.page = 5
-            st.rerun()
-        if st.button("🛡️ Safety Stock", use_container_width=True):
-            st.session_state.page = 6
-            st.rerun()
+        # Data & Table button
+        if st.session_state.page == 2:
+            st.markdown('<div class="active-nav-button">📁 Data & Table</div>', unsafe_allow_html=True)
+        else:
+            if st.button("📁 Data & Table", use_container_width=True):
+                st.session_state.page = 2
+                st.rerun()
+        
+        # Analysis Menu button
+        if st.session_state.page == 3:
+            st.markdown('<div class="active-nav-button">🔍 Analysis Menu</div>', unsafe_allow_html=True)
+        else:
+            if st.button("🔍 Analysis Menu", use_container_width=True):
+                st.session_state.page = 3
+                st.rerun()
+        
+        # Forecasting button
+        if st.session_state.page == 4:
+            st.markdown('<div class="active-nav-button">📈 Forecasting</div>', unsafe_allow_html=True)
+        else:
+            if st.button("📈 Forecasting", use_container_width=True):
+                st.session_state.page = 4
+                st.rerun()
+        
+        # EOQ button
+        if st.session_state.page == 5:
+            st.markdown('<div class="active-nav-button">📦 EOQ</div>', unsafe_allow_html=True)
+        else:
+            if st.button("📦 EOQ", use_container_width=True):
+                st.session_state.page = 5
+                st.rerun()
+        
+        # Safety Stock button
+        if st.session_state.page == 6:
+            st.markdown('<div class="active-nav-button">🛡️ Safety Stock</div>', unsafe_allow_html=True)
+        else:
+            if st.button("🛡️ Safety Stock", use_container_width=True):
+                st.session_state.page = 6
+                st.rerun()
+    
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
 
@@ -316,11 +327,8 @@ def page_selected_material():
         if st.button("Next ➜ Analysis", type="primary"):
             st.session_state.page = 3
             st.rerun()
-    
-    # عرض الجدول مع تنسيق أفضل عند تفعيل Show Table
     if st.session_state.show_table:
         view_table()
-    
     if st.session_state.editing:
         edit_table(st.session_state.file, st.session_state.period)
 
