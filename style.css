@@ -1,32 +1,25 @@
 :root {
     --main-color: #10cab7;
-    --secondary-color: #2c4755;
-    --background-color: #f6f6f6;
-    --header-background: #ffffff;
-    --text-main: #10cab7;        /* اللون الرئيسي للنصوص */
-    --text-secondary: #2c4755;
+    --text-primary: #2c3e50;
+    --text-secondary: #555555;
+    --background: #ffffff;
+    --light-gray: #f8f9fa;
+    --border: #e9ecef;
 }
 
-/* خلفية كل الشاشة */
-body, .stApp, .main {
-    background-color: var(--background-color) !important;
-    color: var(--text-main) !important;
+/* خلفية بيضاء نظيفة لكل التطبيق */
+body, .stApp, .main, .block-container {
+    background-color: var(--background) !important;
+    color: var(--text-primary) !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
 }
 
-/* ضمان الخلفية في كل العناصر */
-section, div, .block-container {
-    background-color: var(--background-color) !important;
-}
-
-/* الـ Header الثابت في الأعلى */
+/* الـ Header الثابت */
 .stApp > div:first-child {
-    background-color: var(--header-background) !important;
-    border-bottom: 5px solid var(--main-color) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
-    padding: 1.8rem 0 !important;
+    background-color: var(--background) !important;
+    border-bottom: 4px solid var(--main-color) !important;
+    box-shadow: 0 4px 20px rgba(16, 202, 183, 0.1) !important;
+    padding: 2rem 0 !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -39,11 +32,10 @@ section, div, .block-container {
 .stApp > div:first-child::before {
     content: attr(data-page-title);
     display: block;
-    font-size: 2.4rem;
-    font-weight: 800;
+    font-size: 2.5rem;
+    font-weight: 700;
     color: var(--main-color);
     margin: 0;
-    text-shadow: 0 2px 4px rgba(16, 202, 183, 0.2);
 }
 
 /* إخفاء العناوين الافتراضية */
@@ -51,62 +43,58 @@ h1, h2:first-of-type {
     display: none !important;
 }
 
-/* باقي العناوين الفرعية (h2, h3) */
+/* العناوين الفرعية */
 h2, h3, h4 {
     color: var(--main-color) !important;
-    font-weight: 700 !important;
-    margin-top: 2.5rem !important;
+    font-weight: 600 !important;
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
 }
 
-/* كل النصوص العادية: paragraphs, captions, labels, markdown */
-p, div, span, label, .stMarkdown, .stCaption, .stText {
-    color: var(--text-main) !important;
+/* النصوص العادية */
+p, span, label, .stMarkdown, .stCaption, div {
+    color: var(--text-primary) !important;
     font-size: 1.05rem !important;
-    line-height: 1.6 !important;
+    line-height: 1.7 !important;
 }
 
-/* النصوص داخل الـ success/info/warning/error */
-.stSuccess, .stInfo, .stWarning, .stError {
-    color: var(--text-secondary) !important;
-}
-
-/* أزرار Primary */
+/* أزرار Primary (Next, Run, Calculate...) */
 button[kind="primary"] {
     background-color: var(--main-color) !important;
     color: white !important;
     border: none !important;
     border-radius: 12px !important;
-    padding: 0.8rem 1.8rem !important;
-    font-weight: 700 !important;
+    padding: 0.8rem 2rem !important;
+    font-weight: 600 !important;
     font-size: 1.1rem !important;
-    box-shadow: 0 6px 15px rgba(16, 202, 183, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(16, 202, 183, 0.25) !important;
     transition: all 0.3s ease !important;
 }
 
 button[kind="primary"]:hover {
     background-color: #0da89a !important;
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(16, 202, 183, 0.5) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(16, 202, 183, 0.35) !important;
 }
 
-/* أزرار Secondary */
+/* أزرار Back وغيرها */
 button[kind="secondary"] {
-    background-color: var(--secondary-color) !important;
+    background-color: var(--text-secondary) !important;
     color: white !important;
     border-radius: 12px !important;
     padding: 0.8rem 1.8rem !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
 }
 
 /* الجداول */
 .stDataFrame {
     border-radius: 14px !important;
     overflow: hidden !important;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
-    background-color: white !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+    border: 1px solid var(--border) !important;
 }
 
-.stDataFrame div[data-testid="stDataFrame"] {
+.stDataFrame table {
     background-color: white !important;
 }
 
@@ -115,34 +103,49 @@ button[kind="secondary"] {
     background: white !important;
     border-radius: 14px !important;
     padding: 1.8rem !important;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
-    border-left: 8px solid var(--main-color) !important;
-}
-
-.stMetric > div {
-    color: var(--text-secondary) !important;
-}
-
-/* Success / Info / Warning / Error boxes */
-.stSuccess, .stInfo, .stWarning, .stError {
-    border-radius: 14px !important;
-    padding: 1.5rem !important;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
-    background-color: white !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
     border-left: 6px solid var(--main-color) !important;
 }
 
-/* مسافة كبيرة تحت الـ Header الثابت */
+.stMetric label {
+    color: var(--text-secondary) !important;
+}
+
+.stMetric > div > div:first-child {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+}
+
+/* Success / Info / Warning boxes */
+.stSuccess, .stInfo, .stWarning, .stError {
+    background-color: var(--light-gray) !important;
+    border-radius: 14px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06) !important;
+    border-left: 5px solid var(--main-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Selectbox و Radio و Checkbox */
+.stSelectbox > div > div, .stRadio > div, .stCheckbox > div {
+    background-color: white !important;
+    border-radius: 10px !important;
+    padding: 0.5rem !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+}
+
+/* Divider */
+hr {
+    border-color: var(--main-color) !important;
+    opacity: 0.3 !important;
+    margin: 3rem 0 !important;
+}
+
+/* مسافة تحت الـ Header */
 .main .block-container {
-    padding-top: 160px !important;   /* زيادة عشان العنوان الكبير */
-    max-width: 1350px !important;
+    padding-top: 160px !important;
+    max-width: 1400px !important;
     margin: 0 auto !important;
     padding-left: 2rem !important;
     padding-right: 2rem !important;
-}
-
-hr {
-    border-color: var(--main-color) !important;
-    opacity: 0.5 !important;
-    margin: 2rem 0 !important;
 }
