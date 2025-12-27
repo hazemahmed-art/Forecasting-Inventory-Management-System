@@ -258,44 +258,17 @@ def page_material_selection():
 
 # ================= SCREEN 2: Data Selection & Table View/Edit =================
 def page_selected_material():
-    st.title("Data Management")
-
-    # الجزء العلوي: Period Selection كبير في الوسط، Selected Material صغير على اليمين
-    top_left, top_center, top_right = st.columns([1, 2, 1])
-
-    with top_center:
-        st.markdown("### Select Data Period")
-        st.session_state.period = select_period()
-
-    with top_right:
-        st.markdown("#### Selected Material")
-        if st.session_state.material:
-            st.markdown(f"""
-            <div style="font-size:1.1rem; line-height:1.6; color:#555;">
-            <strong>Family:</strong> {st.session_state.material.get('family', '-')}<br>
-            <strong>Type:</strong> {st.session_state.material.get('type', '-')}<br>
-            <strong>Grade:</strong> {st.session_state.material.get('grade', '-')}
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.info("No material selected yet")
-
-    st.markdown("---")
-
-    # باقي المحتوى
-    family = st.session_state.material.get('family', '')
-    m_type = st.session_state.material.get('type', '')
-    grade = st.session_state.material.get('grade', '')
-
-    if st.session_state.period and family and m_type and grade:
-        st.session_state.file = choose_data_source(st.session_state.period, family, m_type, grade)
-
-        if st.session_state.file and st.session_state.df is None:
-            st.session_state.df = load_table(st.session_state.file)
-            if st.session_state.df is None:
-                st.stop()
-
-    # الأزرار
+    st.title("Selected Material")
+    st.markdown(f"**{st.session_state.material['family']} / {st.session_state.material['type']} / {st.session_state.material['grade']}**")
+    st.session_state.period = select_period()
+    family = st.session_state.material['family']
+    m_type = st.session_state.material['type']
+    grade = st.session_state.material['grade']
+    st.session_state.file = choose_data_source(st.session_state.period, family, m_type, grade)
+    if st.session_state.file and st.session_state.df is None:
+        st.session_state.df = load_table(st.session_state.file)
+        if st.session_state.df is None:
+            st.stop()
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.session_state.show_table = st.checkbox("Show Table", value=st.session_state.show_table)
@@ -313,12 +286,10 @@ def page_selected_material():
         if st.button("Next ➜ Analysis", type="primary"):
             st.session_state.page = 3
             st.rerun()
-
     if st.session_state.show_table:
         view_table()
     if st.session_state.editing:
         edit_table(st.session_state.file, st.session_state.period)
-
 # ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
     st.title("Analysis & Calculations")
@@ -556,3 +527,4 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
