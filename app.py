@@ -210,9 +210,7 @@ def edit_table(file_path, period):
 # ================= SIDEBAR: Navigation & Current Selection Info =================
 # This section creates a persistent sidebar that appears on every screen
 with st.sidebar:
-    #st.header("📊 Forecasting & Inventory System")
-    #st.markdown("---")
-    
+
     # Show current selected material (if any)
     if st.session_state.material:
         st.subheader("Selected Material")
@@ -221,7 +219,6 @@ with st.sidebar:
         st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}") 
         if st.session_state.period:
             st.write(f"**Period:** {st.session_state.period}")
-        #st.markdown("---")
     
     # Navigation buttons in sidebar
     st.subheader("Navigation")
@@ -256,6 +253,79 @@ with st.sidebar:
     
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
+
+# ================= TOP NAVIGATION BAR: Professional Horizontal Navigation =================
+# This creates a fixed, professional top navigation bar with active state highlighting
+
+# Custom CSS for top navigation bar (added here to ensure it works even if style.css is missing)
+st.markdown("""
+<style>
+    .top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: #0e1117;
+        border-bottom: 1px solid #fa7328;
+        display: flex;
+        align-items: center;
+        padding: 0 2rem;
+        z-index: 999;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .top-bar h2 {
+        color: #fa7328;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    .nav-links {
+        margin-left: auto;
+        display: flex;
+        gap: 2rem;
+    }
+    .nav-link {
+        color: #fafafa;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        transition: all 0.3s;
+    }
+    .nav-link:hover {
+        background-color: #fa732850;
+        color: white;
+    }
+    .nav-link.active {
+        background-color: #fa7328;
+        color: white;
+        font-weight: bold;
+    }
+    .main-content {
+        margin-top: 80px;
+        padding: 1rem;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Top Navigation Bar HTML
+top_bar_html = f"""
+<div class="top-bar">
+    <h2>📊 Forecasting & Inventory System</h2>
+    <div class="nav-links">
+        <a href="#" class="nav-link {'active' if st.session_state.page == 1 else ''}" onclick="return false;">1. Material Selection</a>
+        <a href="#" class="nav-link {'active' if st.session_state.page == 2 else ''}" onclick="return false;">2. Data & Table</a>
+        <a href="#" class="nav-link {'active' if st.session_state.page == 3 else ''}" onclick="return false;">3. Analysis Menu</a>
+        <a href="#" class="nav-link {'active' if st.session_state.page == 4 else ''}" onclick="return false;">📈 Forecasting</a>
+        <a href="#" class="nav-link {'active' if st.session_state.page == 5 else ''}" onclick="return false;">📦 EOQ</a>
+        <a href="#" class="nav-link {'active' if st.session_state.page == 6 else ''}" onclick="return false;">🛡️ Safety Stock</a>
+    </div>
+</div>
+"""
+st.markdown(top_bar_html, unsafe_allow_html=True)
+
+# Add padding to main content to avoid overlap with fixed top bar
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
@@ -331,8 +401,8 @@ def page_forecasting():
     df_base = st.session_state.df.copy()
     st.markdown(
         f"""
-        **Material:** {mat['family']} / {mat['type']} / {mat['grade']}   |  
-        **Period:** {period_name}   |  
+        **Material:** {mat['family']} / {mat['type']} / {mat['grade']} &nbsp;&nbsp;|&nbsp;&nbsp;
+        **Period:** {period_name} &nbsp;&nbsp;|&nbsp;&nbsp;
         **Records:** {len(df_base)}
         """
     )
@@ -525,6 +595,9 @@ def page_safety_stock():
         st.session_state.page = 3
         st.rerun()
 
+# Close the main-content div at the end
+st.markdown('</div>', unsafe_allow_html=True)
+
 # ================= Main Navigation =================
 if st.session_state.page == 1:
     page_material_selection()
@@ -538,5 +611,3 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
-
-
