@@ -221,7 +221,7 @@ with st.sidebar:
         st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}") 
         if st.session_state.period:
             st.write(f"**Period:** {st.session_state.period}")
-        st.markdown("---")
+        #st.markdown("---")
     
     # Navigation buttons in sidebar
     st.subheader("Navigation")
@@ -538,4 +538,5 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
+
 
