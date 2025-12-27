@@ -102,20 +102,24 @@ def load_table(file_path):
 
 def view_table():
     st.subheader("Table Preview")
-    styled_df = st.session_state.df.style.set_properties(**{
-        'font-size': '1.4rem',
-        'font-weight': 'bold',
-        'padding': '1rem',
-        'text-align': 'center'
-    }).set_table_styles([
-        {'selector': 'th', 'props': [
-            ('font-size': '1.5rem'),
-            ('font-weight': 'bold'),
-            ('background-color', '#f0f2f6'),
-            ('color': '#212529'),
-            ('padding': '1rem')
-        ]}
-    ])
+    # تنسيق الجدول بدون أخطاء syntax
+    styled_df = st.session_state.df.style \
+        .set_properties(**{
+            'font-size': '1.4rem',
+            'font-weight': 'bold',
+            'padding': '1rem',
+            'text-align': 'center'
+        }) \
+        .set_table_styles([
+            {'selector': 'th', 
+             'props': [
+                 ('font-size', '1.5rem'),
+                 ('font-weight', 'bold'),
+                 ('background-color', '#f0f2f6'),
+                 ('color', '#212529'),
+                 ('padding', '1rem')
+             ]}
+        ])
     st.dataframe(styled_df, use_container_width=True)
 
 def renumber_first_column(df, first_col):
@@ -314,7 +318,6 @@ def page_analysis():
     st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
 
-    # 3 أعمدة متساوية
     col1, col2, col3 = st.columns(3)
 
     with col1:
