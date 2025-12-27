@@ -38,62 +38,44 @@ except Exception as e:
     st.error(f"Cannot read 'Classification-of-Material.xlsx': {e}")
     st.stop()
 
-# ================= Reduce Top Padding & Custom Styles for Page 1 =================
+# ================= Reduce Top Padding =================
 st.markdown("""
 <style>
-    /* Reduce the default top padding of the main content area */
     .block-container {
         padding-top: 2rem !important;
     }
-    /* Make selectboxes larger and clearer on page 1 */
-    .page1-selectbox .stSelectbox > div > div {
-        font-size: 1.5rem !important;
-        padding: 1.2rem !important;
-        border-radius: 12px !important;
-        background-color: #f8f9fa;
-        border: 2px solid #ced4da;
-    }
-    .page1-selectbox label {
-        font-size: 1.6rem !important;
-        font-weight: bold !important;
-        color: #333333 !important;
-    }
-    /* Make the step description normal color (not primary) */
-    .step-description {
-        color: #495057 !important;
+    /* Style the dataframe in page 2 when shown */
+    .page2-table .stDataFrame data-frame {
         font-size: 1.4rem !important;
-        font-weight: normal !important;
-    }
-    /* Selected caption larger and clearer */
-    .selected-caption {
-        font-size: 1.6rem !important;
         font-weight: bold !important;
+    }
+    .page2-table thead th {
+        font-size: 1.5rem !important;
+        font-weight: bold !important;
+        background-color: #f0f2f6 !important;
         color: #212529 !important;
-        margin-top: 20px !important;
+    }
+    .page2-table tbody td {
+        font-size: 1.4rem !important;
+        font-weight: bold !important;
+        padding: 1rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ================= Helper Functions =================
 def select_material(df):
-    st.markdown('<p class="step-description">Step 1: Select the Material you want to analyze</p>', unsafe_allow_html=True)
-    st.markdown("### Select a Target Material")
-    
-    # Wrap selectboxes with custom class for styling
-    st.markdown('<div class="page1-selectbox">', unsafe_allow_html=True)
+    st.markdown("## Select a Target Material")
     c1, c2, c3 = st.columns(3)
     with c1:
-        family = st.selectbox("**Material Family**", sorted(df["MaterialFamily"].unique()), key="fam_sel")
+        family = st.selectbox("Material Family", sorted(df["MaterialFamily"].unique()), key="fam_sel")
     family_df = df[df["MaterialFamily"] == family]
     with c2:
-        m_type = st.selectbox("**Material Type**", sorted(family_df["MaterialType"].unique()), key="type_sel")
+        m_type = st.selectbox("Material Type", sorted(family_df["MaterialType"].unique()), key="type_sel")
     type_df = family_df[family_df["MaterialType"] == m_type]
     with c3:
-        grade = st.selectbox("**Material Grade**", sorted(type_df["MaterialGrade"].unique()), key="grade_sel")
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Larger and clearer selected caption
-    st.markdown(f'<p class="selected-caption">Selected → <strong>{family} / {m_type} / {grade}</strong></p>', unsafe_allow_html=True)
+        grade = st.selectbox("Material Grade", sorted(type_df["MaterialGrade"].unique()), key="grade_sel")
+    st.caption(f"Selected → **{family} / {m_type} / {grade}**")
     st.divider()
     return {"family": family, "type": m_type, "grade": grade}
 
@@ -136,7 +118,22 @@ def load_table(file_path):
 
 def view_table():
     st.subheader("Table Preview")
-    st.dataframe(st.session_state.df, use_container_width=True)
+    # Apply custom styling to the dataframe
+    styled_df = st.session_state.df.style.set_properties(**{
+        'font-size': '1.4rem',
+        'font-weight': 'bold',
+        'padding': '1rem',
+        'text-align': 'center'
+    }).set_table_styles([
+        {'selector': 'th', 'props': [
+            ('font-size', '1.5rem'),
+            ('font-weight', 'bold'),
+            ('background-color', '#f0f2f6'),
+            ('color', '#212529'),
+            ('padding', '1rem')
+        ]}
+    ])
+    st.dataframe(styled_df, use_container_width=True)
 
 def renumber_first_column(df, first_col):
     df[first_col] = range(1, len(df) + 1)
@@ -283,6 +280,7 @@ with st.sidebar:
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
     st.title("Welcome to Forecasting & Inventory Management System")
+    st.markdown("### Step 1: Select the Material you want to analyze")
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
         st.session_state.page = 2
@@ -318,8 +316,11 @@ def page_selected_material():
         if st.button("Next ➜ Analysis", type="primary"):
             st.session_state.page = 3
             st.rerun()
+    
+    # عرض الجدول مع تنسيق أفضل عند تفعيل Show Table
     if st.session_state.show_table:
         view_table()
+    
     if st.session_state.editing:
         edit_table(st.session_state.file, st.session_state.period)
 
