@@ -102,24 +102,20 @@ def load_table(file_path):
 
 def view_table():
     st.subheader("Table Preview")
-    # تنسيق الجدول بدون أخطاء syntax
-    styled_df = st.session_state.df.style \
-        .set_properties(**{
-            'font-size': '1.4rem',
-            'font-weight': 'bold',
-            'padding': '1rem',
-            'text-align': 'center'
-        }) \
-        .set_table_styles([
-            {'selector': 'th', 
-             'props': [
-                 ('font-size', '1.5rem'),
-                 ('font-weight', 'bold'),
-                 ('background-color', '#f0f2f6'),
-                 ('color', '#212529'),
-                 ('padding', '1rem')
-             ]}
-        ])
+    styled_df = st.session_state.df.style.set_properties(**{
+        'font-size': '1.4rem',
+        'font-weight': 'bold',
+        'padding': '1rem',
+        'text-align': 'center'
+    }).set_table_styles([
+        {'selector': 'th', 'props': [
+            ('font-size', '1.5rem'),
+            ('font-weight', 'bold'),
+            ('background-color', '#f0f2f6'),
+            ('color', '#212529'),
+            ('padding', '1rem')
+        ]}
+    ])
     st.dataframe(styled_df, use_container_width=True)
 
 def renumber_first_column(df, first_col):
@@ -288,6 +284,7 @@ def page_selected_material():
             st.stop()
     c1, c2, c3, c4 = st.columns(4)
     with c1:
+        # Checkbox for Show Table
         st.session_state.show_table = st.checkbox("Show Table", value=st.session_state.show_table)
     with c2:
         if st.button("✏ Edit Table" if not st.session_state.editing else "✏ Editing..."):
@@ -304,6 +301,7 @@ def page_selected_material():
             st.session_state.page = 3
             st.rerun()
     
+    # عرض الجدول فقط إذا كان في بيانات محملة
     if st.session_state.show_table:
         if st.session_state.df is not None:
             view_table()
@@ -314,95 +312,26 @@ def page_selected_material():
         edit_table(st.session_state.file, st.session_state.period)
 
 # ================= SCREEN 3: Analysis Menu =================
-# ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
     st.title("Analysis & Calculations")
     st.markdown("### Choose the analysis you want to perform")
-
     col1, col2, col3 = st.columns(3)
-
-    # Forecasting Card
     with col1:
-        if st.button("", key="forecasting_card", help="Click anywhere on the card to go to Forecasting"):
+        if st.button("📈 Forecasting", use_container_width=True, type="primary"):
             st.session_state.page = 4
             st.rerun()
-        st.markdown(f"""
-        <div class="analysis-card" onclick="document.querySelector('[key=\\'forecasting_card\\']').click()">
-            <div style="
-                background-color: white;
-                border: 4px solid #10aab7;
-                border-radius: 16px;
-                padding: 30px;
-                text-align: center;
-                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            ">
-                <h3 style="background-color: #10aab7; color: white; padding: 16px; border-radius: 12px; margin: -30px -30px 30px -30px; font-size: 1.6rem;">
-                    📈 Forecasting
-                </h3>
-                <img src="images/forecasting.png" style="max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0;">
-                <p style="font-size: 1rem; color: #555555; line-height: 1.6;">
-                    Compare different forecasting methods and select the best one based on error metrics.
-                </p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # EOQ Card
     with col2:
-        if st.button("", key="eoq_card", help="Click anywhere on the card to go to EOQ"):
+        if st.button("📦 EOQ", use_container_width=True, type="primary"):
             st.session_state.page = 5
             st.rerun()
-        st.markdown(f"""
-        <div class="analysis-card" onclick="document.querySelector('[key=\\'eoq_card\\']').click()">
-            <div style="
-                background-color: white;
-                border: 4px solid #10aab7;
-                border-radius: 16px;
-                padding: 30px;
-                text-align: center;
-                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            ">
-                <h3 style="background-color: #10aab7; color: white; padding: 16px; border-radius: 12px; margin: -30px -30px 30px -30px; font-size: 1.6rem;">
-                    📦 Economic Order Quantity (EOQ)
-                </h3>
-                <img src="images/eoq.png" style="max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0;">
-                <p style="font-size: 1rem; color: #555555; line-height: 1.6;">
-                    Calculate the optimal order quantity and reorder point to minimize inventory costs.
-                </p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # Safety Stock Card
     with col3:
-        if st.button("", key="safety_card", help="Click anywhere on the card to go to Safety Stock"):
+        if st.button("🛡️ Safety Stock", use_container_width=True, type="primary"):
             st.session_state.page = 6
             st.rerun()
-        st.markdown(f"""
-        <div class="analysis-card" onclick="document.querySelector('[key=\\'safety_card\\']').click()">
-            <div style="
-                background-color: white;
-                border: 4px solid #10aab7;
-                border-radius: 16px;
-                padding: 30px;
-                text-align: center;
-                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            ">
-                <h3 style="background-color: #10aab7; color: white; padding: 16px; border-radius: 12px; margin: -30px -30px 30px -30px; font-size: 1.6rem;">
-                    🛡️ Safety Stock
-                </h3>
-                <img src="images/safetystock.png" style="max-width: 100%; height: auto; border-radius: 12px; margin: 20px 0;">
-                <p style="font-size: 1rem; color: #555555; line-height: 1.6;">
-                    Determine the safety stock level using fixed or statistical methods based on service level.
-                </p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<br><br>", unsafe_allow_html=True)
     if st.button("⬅ Back to Data Editing"):
         st.session_state.page = 2
         st.rerun()
+
 # ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
     st.title("📈 Forecasting Analysis")
@@ -619,5 +548,3 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
-
-
