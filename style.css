@@ -1,130 +1,115 @@
-/* style.css */
-
 :root {
     --main-color: #10aab7;
     --secondary-color: #2c4755;
-    --section-background: #f6f6f6;
+    --background-color: #f6f6f6;
     --header-background: #ffffff;
     --text-primary: #2c4755;
-    --text-secondary: #555555;
-    --border-color: #e0e0e0;
 }
 
+/* خلفية الشاشة كلها */
 body {
+    background-color: var(--background-color) !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--section-background);
-    color: var(--text-primary);
     margin: 0;
     padding: 0;
 }
 
-/* Header مستطيل أبيض في الأعلى */
-.stApp > header {
+.stApp {
+    background-color: var(--background-color) !important;
+}
+
+/* الـ Header العلوي */
+.stApp > div:first-child {
     background-color: var(--header-background) !important;
-    border-bottom: 3px solid var(--main-color);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-bottom: 4px solid var(--main-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    padding: 1rem 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 999 !important;
 }
 
-.stApp > header .css-1v0mbdj {
-    padding: 1rem 0;
+/* إضافة عنوان التطبيق داخل الـ Header */
+.stApp > div:first-child::before {
+    content: "Forecasting & Inventory Management System";
+    display: block;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--main-color);
+    margin: 0;
+    padding: 0.5rem 0;
 }
 
-/* تنسيق العناوين الرئيسية */
-h1, h2, h3, .stTitle {
+/* إخفاء العنوان الافتراضي اللي تحت الـ Header */
+h1 {
+    display: none !important;
+}
+
+/* باقي العناوين (h2, h3...) */
+h2, h3, h4 {
     color: var(--main-color) !important;
     font-weight: 600 !important;
 }
 
-/* تنسيق النصوص العادية */
-.stMarkdown, .stText {
-    color: var(--text-primary);
-}
-
-/* خلفية الأقسام */
-section[data-testid="stSidebar"] {
-    background-color: var(--header-background);
-}
-
-div[data-testid="stDecoration"] {
-    background-color: var(--main-color);
-}
-
-/* تنسيق الأزرار الرئيسية (Next, Calculate, Run Forecasting, etc.) */
+/* أزرار Primary */
 button[kind="primary"] {
     background-color: var(--main-color) !important;
     color: white !important;
     border: none !important;
-    border-radius: 8px !important;
-    padding: 0.6rem 1.2rem !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 1.5rem !important;
     font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(16, 202, 183, 0.3) !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 2px 6px rgba(16, 202, 183, 0.2) !important;
 }
 
 button[kind="primary"]:hover {
-    background-color: #0eb8a5 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 202, 183, 0.3) !important;
+    background-color: #0da89a !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(16, 202, 183, 0.4) !important;
 }
 
-button[kind="primary"]:active {
-    transform: translateY(0);
-}
-
-/* تنسيق أزرار Back (العادية) */
+/* أزرار Secondary */
 button[kind="secondary"] {
     background-color: var(--secondary-color) !important;
     color: white !important;
-    border-radius: 8px !important;
-    padding: 0.6rem 1.2rem !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 1.5rem !important;
     font-weight: 600 !important;
-    transition: all 0.3s ease !important;
 }
 
-button[kind="secondary"]:hover {
-    background-color: #243a46 !important;
-    transform: translateY(-2px);
-}
-
-/* تنسيق الجداول */
+/* تحسين الجداول والمكونات */
 .stDataFrame {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
 }
 
-/* تحسين شكل الـ Selectbox والـ Radio */
-.stSelectbox > div > div, .stRadio > div {
-    background-color: white;
-    border-radius: 8px;
-    padding: 0.5rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-/* تحسين الـ Metrics */
 .stMetric {
-    background-color: white;
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border-left: 5px solid var(--main-color);
+    background: white !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    border-left: 6px solid var(--main-color) !important;
 }
 
-/* تحسين الـ Success, Info, Warning */
-.stSuccess, .stInfo, .stWarning {
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+.stSuccess, .stInfo, .stWarning, .stError {
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
 }
 
-/* إضافة مساحة علوية بعد الـ Header */
+/* إضافة مسافة علوية عشان المحتوى ما يبقاش تحت الـ Header الثابت */
 .main .block-container {
-    padding-top: 2rem;
-    max-width: 1200px;
+    padding-top: 100px !important;  /* مسافة كافية تحت الـ Header الثابت */
+    max-width: 1300px !important;
+    margin: 0 auto !important;
 }
 
-/* تحسين الـ Divider */
 hr {
-    border-color: var(--main-color);
-    opacity: 0.3;
+    border-color: var(--main-color) !important;
+    opacity: 0.4 !important;
 }
