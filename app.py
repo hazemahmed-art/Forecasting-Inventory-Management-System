@@ -40,7 +40,7 @@ except Exception as e:
 
 # ================= Functions =================
 def select_material(df):
-    st.markdown("## Select Target Material")
+    st.markdown("## Select a Target Material")
     c1, c2, c3 = st.columns(3)
     with c1:
         family = st.selectbox("Material Family", sorted(df["MaterialFamily"].unique()), key="fam_sel")
@@ -58,10 +58,10 @@ def select_period():
     st.markdown("## Select Data Period")
     return st.selectbox("Period", list(PERIOD_COLUMN_MAP.keys()), key="period_select")
 
-def choose_data_source(period):
+def choose_data_source(period, family, m_type, grade):
     st.markdown("## Data Source")
     source = st.radio("Choose source", ["Upload Excel File", "Choose Existing File"], horizontal=True, key="data_source_radio")
-    folder = f"Uploaded/{period}"
+    folder = f"Uploaded/{family}/{m_type}/{grade}/{period}"
     os.makedirs(folder, exist_ok=True)
     selected_file = None
     if source == "Upload Excel File":
@@ -225,7 +225,10 @@ def page_selected_material():
     st.markdown(f"**{st.session_state.material['family']} / {st.session_state.material['type']} / {st.session_state.material['grade']}**")
 
     st.session_state.period = select_period()
-    st.session_state.file = choose_data_source(st.session_state.period)
+    family = st.session_state.material['family']
+    m_type = st.session_state.material['type']
+    grade = st.session_state.material['grade']
+    st.session_state.file = choose_data_source(st.session_state.period, family, m_type, grade)
 
     if st.session_state.file and st.session_state.df is None:
         st.session_state.df = load_table(st.session_state.file)
@@ -542,6 +545,3 @@ elif st.session_state.page == 5:
     page_eoq()
 elif st.session_state.page == 6:
     page_safety_stock()
-
-
-
