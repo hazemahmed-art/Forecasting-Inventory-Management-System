@@ -207,6 +207,56 @@ def edit_table(file_path, period):
             if st.button("Cancel"):
                 st.rerun()
 
+# ================= SIDEBAR: Navigation & Current Selection Info =================
+# This section creates a persistent sidebar that appears on every screen
+with st.sidebar:
+    st.header("📊 Forecasting & Inventory System")
+    st.markdown("---")
+    
+    # Show current selected material (if any)
+    if st.session_state.material:
+        st.subheader("Selected Material")
+        st.write(f"**Family:** {st.session_state.material.get('family', '-')}") 
+        st.write(f"**Type:** {st.session_state.material.get('type', '-')}") 
+        st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}") 
+        if st.session_state.period:
+            st.write(f"**Period:** {st.session_state.period}")
+        st.markdown("---")
+    
+    # Navigation buttons in sidebar
+    st.subheader("Navigation")
+    
+    if st.button("🏠 Material Selection", use_container_width=True):
+        st.session_state.page = 1
+        st.session_state.df = None
+        st.session_state.file = None
+        st.session_state.editing = False
+        st.rerun()
+    
+    if st.session_state.material:  # Only show further navigation after material is selected
+        if st.button("📁 Data & Table", use_container_width=True):
+            st.session_state.page = 2
+            st.rerun()
+        
+        if st.button("🔍 Analysis Menu", use_container_width=True):
+            st.session_state.page = 3
+            st.rerun()
+        
+        if st.button("📈 Forecasting", use_container_width=True):
+            st.session_state.page = 4
+            st.rerun()
+        
+        if st.button("📦 EOQ", use_container_width=True):
+            st.session_state.page = 5
+            st.rerun()
+        
+        if st.button("🛡️ Safety Stock", use_container_width=True):
+            st.session_state.page = 6
+            st.rerun()
+    
+    st.markdown("---")
+    st.caption("Forecasting & Inventory Management System © 2025")
+
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
     st.title("Welcome to Forecasting & Inventory Management System")
@@ -281,8 +331,8 @@ def page_forecasting():
     df_base = st.session_state.df.copy()
     st.markdown(
         f"""
-        **Material:** {mat['family']} / {mat['type']} / {mat['grade']} &nbsp;&nbsp;|&nbsp;&nbsp;
-        **Period:** {period_name} &nbsp;&nbsp;|&nbsp;&nbsp;
+        **Material:** {mat['family']} / {mat['type']} / {mat['grade']}   |  
+        **Period:** {period_name}   |  
         **Records:** {len(df_base)}
         """
     )
