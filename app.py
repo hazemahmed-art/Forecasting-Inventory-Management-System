@@ -208,10 +208,10 @@ def edit_table(file_path, period):
                 st.rerun()
 
 # ================= SIDEBAR: Navigation & Current Selection Info =================
-# This section creates a persistent sidebar that appears on every screen
 with st.sidebar:
-
-    # Show current selected material (if any)
+    st.header("📊 Forecasting & Inventory System")
+    st.markdown("---")
+    
     if st.session_state.material:
         st.subheader("Selected Material")
         st.write(f"**Family:** {st.session_state.material.get('family', '-')}") 
@@ -219,8 +219,8 @@ with st.sidebar:
         st.write(f"**Grade:** {st.session_state.material.get('grade', '-')}") 
         if st.session_state.period:
             st.write(f"**Period:** {st.session_state.period}")
+        st.markdown("---")
     
-    # Navigation buttons in sidebar
     st.subheader("Navigation")
     
     if st.button("🏠 Material Selection", use_container_width=True):
@@ -230,7 +230,7 @@ with st.sidebar:
         st.session_state.editing = False
         st.rerun()
     
-    if st.session_state.material:  # Only show further navigation after material is selected
+    if st.session_state.material:
         if st.button("📁 Data & Table", use_container_width=True):
             st.session_state.page = 2
             st.rerun()
@@ -254,10 +254,8 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Forecasting & Inventory Management System © 2025")
 
-# ================= TOP NAVIGATION BAR: Professional Horizontal Navigation =================
-# This creates a fixed, professional top navigation bar with active state highlighting
-
-# Custom CSS for top navigation bar (added here to ensure it works even if style.css is missing)
+# ================= TOP NAVIGATION BAR: Professional with Logo, Page Title & Settings =================
+# Custom CSS for enhanced top bar
 st.markdown("""
 <style>
     .top-bar {
@@ -265,71 +263,88 @@ st.markdown("""
         top: 0;
         left: 0;
         right: 0;
-        height: 60px;
+        height: 70px;
         background-color: #0e1117;
-        border-bottom: 1px solid #fa7328;
+        border-bottom: 3px solid #fa7328;
         display: flex;
         align-items: center;
         padding: 0 2rem;
         z-index: 999;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
-    .top-bar h2 {
-        color: #fa7328;
-        margin: 0;
-        font-size: 1.5rem;
-    }
-    .nav-links {
-        margin-left: auto;
+    .logo-section {
         display: flex;
-        gap: 2rem;
+        align-items: center;
+        gap: 12px;
     }
-    .nav-link {
-        color: #fafafa;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        transition: all 0.3s;
+    .logo-section img {
+        height: 44px;
+        border-radius: 8px;
     }
-    .nav-link:hover {
-        background-color: #fa732850;
-        color: white;
+    .logo-text {
+        color: #fa7328;
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin: 0;
     }
-    .nav-link.active {
+    .page-title {
+        color: #ffffff;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-left: 30px;
+        flex-grow: 1;
+    }
+    .settings-btn {
         background-color: #fa7328;
         color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
         font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .settings-btn:hover {
+        background-color: #e0651f;
+        transform: translateY(-2px);
     }
     .main-content {
-        margin-top: 80px;
-        padding: 1rem;
+        margin-top: 90px;
+        padding: 1rem 2rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Top Navigation Bar HTML
+# Determine current page title
+page_titles = {
+    1: "Material Selection",
+    2: "Data & Table",
+    3: "Analysis Menu",
+    4: "Forecasting",
+    5: "Economic Order Quantity",
+    6: "Safety Stock"
+}
+current_title = page_titles.get(st.session_state.page, "Dashboard")
+
+# Top Bar HTML with logo (assuming logo.png is in the same folder)
 top_bar_html = f"""
 <div class="top-bar">
-    <h2>📊 Forecasting & Inventory System</h2>
-    <div class="nav-links">
-        <a href="#" class="nav-link {'active' if st.session_state.page == 1 else ''}" onclick="return false;">1. Material Selection</a>
-        <a href="#" class="nav-link {'active' if st.session_state.page == 2 else ''}" onclick="return false;">2. Data & Table</a>
-        <a href="#" class="nav-link {'active' if st.session_state.page == 3 else ''}" onclick="return false;">3. Analysis Menu</a>
-        <a href="#" class="nav-link {'active' if st.session_state.page == 4 else ''}" onclick="return false;">📈 Forecasting</a>
-        <a href="#" class="nav-link {'active' if st.session_state.page == 5 else ''}" onclick="return false;">📦 EOQ</a>
-        <a href="#" class="nav-link {'active' if st.session_state.page == 6 else ''}" onclick="return false;">🛡️ Safety Stock</a>
+    <div class="logo-section">
+        <img src="logo.png" alt="Logo">
+        <h2 class="logo-text">Logo</h2>
     </div>
+    <div class="page-title">{current_title}</div>
+    <button class="settings-btn">⚙️ Settings</button>
 </div>
 """
 st.markdown(top_bar_html, unsafe_allow_html=True)
 
-# Add padding to main content to avoid overlap with fixed top bar
+# Padding for main content
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
 # ================= SCREEN 1: Material Selection =================
 def page_material_selection():
-    st.title("Welcome to Forecasting & Inventory Management System")
+    # Removed st.title() because it's now shown in the top bar
     st.markdown("### Step 1: Select the Material you want to analyze")
     st.session_state.material = select_material(df_class)
     if st.button("Next ➜", type="primary"):
@@ -338,7 +353,7 @@ def page_material_selection():
 
 # ================= SCREEN 2: Data Selection & Table View/Edit =================
 def page_selected_material():
-    st.title("Selected Material")
+    # Removed st.title()
     st.markdown(f"**{st.session_state.material['family']} / {st.session_state.material['type']} / {st.session_state.material['grade']}**")
     st.session_state.period = select_period()
     family = st.session_state.material['family']
@@ -373,7 +388,7 @@ def page_selected_material():
 
 # ================= SCREEN 3: Analysis Menu =================
 def page_analysis():
-    st.title("Analysis & Calculations")
+    # Removed st.title()
     st.markdown("### Choose the analysis you want to perform")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -394,7 +409,7 @@ def page_analysis():
 
 # ================= SCREEN 4: Forecasting Analysis =================
 def page_forecasting():
-    st.title("📈 Forecasting Analysis")
+    # Removed st.title()
     mat = st.session_state.material
     period_name = st.session_state.period
     first_col = PERIOD_COLUMN_MAP[period_name]
@@ -506,7 +521,7 @@ def page_forecasting():
 
 # ================= SCREEN 5: EOQ Calculation =================
 def page_eoq():
-    st.title("📦 Economic Order Quantity (EOQ) & Reorder Point")
+    # Removed st.title()
     mat = st.session_state.material
     st.markdown(f"**Material:** {mat['family']} / {mat['type']} / {mat['grade']}")
     st.divider()
@@ -563,7 +578,7 @@ def page_eoq():
 
 # ================= SCREEN 6: Safety Stock Calculation =================
 def page_safety_stock():
-    st.title("🛡️ Safety Stock Calculation")
+    # Removed st.title()
     mat = st.session_state.material
     st.markdown(f"**Material:** {mat['family']} / {mat['type']} / {mat['grade']}")
     st.divider()
@@ -595,7 +610,7 @@ def page_safety_stock():
         st.session_state.page = 3
         st.rerun()
 
-# Close the main-content div at the end
+# Close main-content div
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= Main Navigation =================
